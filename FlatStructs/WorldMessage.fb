@@ -1,0 +1,39 @@
+namespace WorldMessages;
+enum MessageType : int
+{
+	CreateRoom,
+	EnterRoom,
+	QuitRoom
+}
+
+table WorldMessage
+{
+	type:MessageType = EnterRoom;
+	playerId:string;
+	buff:[ubyte];
+	msgId:int;
+}
+
+table Room
+{
+	id:string;
+	playerCount:int;
+}
+
+table ReplyMsg
+{
+	type:MessageType;
+	msgId:int;
+	buff:[ubyte];
+}
+
+table GetRoomListReply
+{
+	Room:[Room];
+}
+
+table CreateRoomReply
+{
+	errorCode:int;
+	id:string;
+}

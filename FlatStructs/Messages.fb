@@ -1,0 +1,52 @@
+
+namespace Messages;
+
+enum MessageType : int
+{
+	CreateObj,
+	Rpc,
+	Auth,
+	Empty
+}
+
+struct Vec3{
+	x:float;
+	y:float;
+	z:float;
+}
+
+struct Quat
+{
+	x:float;
+	y:float;
+	z:float;
+	w:float;
+}
+
+table RpcMsg
+{
+	netId:int;
+	method:string;
+	argbuf:[ubyte];
+}
+
+table CreateObj
+{
+	path:string;
+	pos:Vec3;
+	rot:Quat;
+}
+
+table GenMessage
+{
+	msgType:MessageType = Rpc;
+	pId:string;
+	msgId:int;
+	buf:[ubyte];
+	frame:int;
+}
+
+struct Empty
+{
+
+}
