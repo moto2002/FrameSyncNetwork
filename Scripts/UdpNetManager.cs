@@ -45,6 +45,7 @@ public  class UdpNetManager : MonoBehaviour
         m_instance = this;
         MessageDispatcher.Instance.RegisterMsgType(MessageType.Rpc, OnRpcMsgCallback);
         MessageDispatcher.Instance.RegisterMsgType(MessageType.CreateObj, OnCreateObjCallback);
+        MessageDispatcher.Instance.RegisterMsgType(MessageType.AddPlayer, OnAddPlayerCallback);
     }
 
     void OnDestroy()
@@ -64,6 +65,10 @@ public  class UdpNetManager : MonoBehaviour
         FrameController.Instance.GetPlayer(pId).GetCommand(new CreateObjCmd(frame, msg));
     }
 
+    void OnAddPlayerCallback(int frame, string pId, ByteBuffer bb)
+    {
+        FrameController.Instance.AddPlayer(pId).GetCommand(CreateObjCmd.CreatePlayer(frame, pId));
+    }
     void Request(MessageType type, int frame, byte[] buffer)
     {
         FlatBufferBuilder builder = new FlatBufferBuilder(1);

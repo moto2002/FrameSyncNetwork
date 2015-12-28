@@ -9,6 +9,7 @@ public enum MessageType : int
  Rpc = 1,
  Auth = 2,
  Empty = 3,
+ AddPlayer = 4,
 };
 
 

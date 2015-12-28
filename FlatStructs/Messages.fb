@@ -6,7 +6,8 @@ enum MessageType : int
 	CreateObj,
 	Rpc,
 	Auth,
-	Empty
+	Empty,
+	AddPlayer
 }
 
 struct Vec3{

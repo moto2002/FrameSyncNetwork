@@ -43,6 +43,12 @@ public class FrameController : AutoCreateSingleTon<FrameController> {
     List<FrameBehaviour> backUp = new List<FrameBehaviour>();
     List<NetPlayer> players = new List<NetPlayer>();
 
+    public NetPlayer AddPlayer(string id)
+    {
+        var ret = new NetPlayer() { pId = id };
+        players.Add(ret);
+        return ret;
+    }
     public NetPlayer GetPlayer(string id)
     {
         return players.Find(x => x.pId == id);

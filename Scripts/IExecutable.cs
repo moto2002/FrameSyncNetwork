@@ -16,9 +16,11 @@ public interface IExecutable
 
 public abstract class ExecutableCmd<T> : IExecutable
 {
-    private int frame;
+    protected int frame;
     public abstract void Execute();
-
+    public ExecutableCmd(int frame){
+        this.frame = frame;
+    }
     public ExecutableCmd(int frame, T msg)
     {
         this.frame = frame;
@@ -52,6 +54,8 @@ public class CreateObjCmd : ExecutableCmd<Messages.CreateObj>
     Vector3 pos;
     Quaternion rot;
     string path;
+    private CreateObjCmd(int frame) : base(frame)
+    { }
     public CreateObjCmd(int frame, Messages.CreateObj msg)
         : base(frame, msg)
     {
@@ -62,6 +66,10 @@ public class CreateObjCmd : ExecutableCmd<Messages.CreateObj>
         path = msg.Path;
     }
 
+    public static CreateObjCmd CreatePlayer(int frame, string playerPrefab)
+    {
+        return new CreateObjCmd(frame) { pos = Vector3.zero, rot = Quaternion.identity, path = playerPrefab};
+    }
     public override void Execute()
     {
         GameObject.Instantiate(Resources.Load(path), pos, rot);

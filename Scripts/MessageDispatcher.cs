@@ -52,6 +52,8 @@ public class MessageDispatcher : MonoBehaviour
         actionDict[msg.MsgType](msg.Frame, msg.PId, bb);
     }
 
+    
+
     public void RegisterMsgType(MessageType type, System.Action<int, string, ByteBuffer> action)
     {
         actionDict[type] = action;
