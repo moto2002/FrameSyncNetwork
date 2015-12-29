@@ -32,7 +32,7 @@ public class FrameController : AutoCreateSingleTon<FrameController> {
     public bool Freezed
     {
         get;
-        private set;
+        set;
     }
     public int Frame
     {
@@ -43,9 +43,9 @@ public class FrameController : AutoCreateSingleTon<FrameController> {
     List<FrameBehaviour> backUp = new List<FrameBehaviour>();
     List<NetPlayer> players = new List<NetPlayer>();
 
-    public NetPlayer AddPlayer(string id)
+    public NetPlayer AddPlayer(string id, int frame)
     {
-        var ret = new NetPlayer() { pId = id };
+        var ret = new NetPlayer() { pId = id , EnterFrame = frame};
         players.Add(ret);
         return ret;
     }
@@ -64,6 +64,8 @@ public class FrameController : AutoCreateSingleTon<FrameController> {
 	
 	// Update is called once per frame
 	void Update () {
+        if (Freezed)
+            return;
         while (Time.realtimeSinceStartup - lastUpdateTime > DeltaTime) {
             FrameUpdate();
             lastUpdateTime += DeltaTime;
@@ -72,18 +74,15 @@ public class FrameController : AutoCreateSingleTon<FrameController> {
 
     void FrameUpdate()
     {
-        if (!Freezed)
+        if (Frame >= ExecuteFrame && Frame % ExecuteFrame == 0)
         {
-            if (Frame >= ExecuteFrame && Frame % ExecuteFrame == 0)
-            {
-                if (AllReady()) {
-                    players.ForEach(x => x.ProcessCommand(Frame));
-                    Step();
-                }
-            }
-            else {
+            if (AllReady()) {
+                players.ForEach(x => x.ProcessCommand(Frame));
                 Step();
             }
+        }
+        else {
+            Step();
         }
     }
 

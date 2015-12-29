@@ -3,7 +3,12 @@ enum MessageType : int
 {
 	CreateRoom,
 	EnterRoom,
-	QuitRoom
+	QuitRoom,
+	GetRoomList,
+	CreateRoomReply,
+	EnterRoomReply,
+	QuitRoomReply,
+	GetRoomListReply
 }
 
 table WorldMessage

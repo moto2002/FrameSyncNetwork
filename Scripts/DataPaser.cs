@@ -36,7 +36,7 @@ class DataPaser
         }
     }
     Dictionary<string, IBufferRW> paramDict = new Dictionary<string, IBufferRW>();
-    Dictionary<string, System.Func<byte[], object>> deserializeDict = new Dictionary<string, System.Func<byte[], object>>();
+    Dictionary<string, System.Func<ArraySegment<byte>, object>> deserializeDict = new Dictionary<string, System.Func<ArraySegment<byte>, object>>();
 
     static DataPaser m_instance;
 
@@ -49,16 +49,16 @@ class DataPaser
         }
     }
 
-    public void RegisterType<Type>(System.Func<byte[], object> des)
+    public void RegisterType<Type>(System.Func<ArraySegment<byte>, object> des)
     {
         var typeName = typeof(Type).FullName;
         deserializeDict[typeName] = des;
     }
 
-    public T Deserialize<T>(byte[] bytes)
+    public T Deserialize<T>(ArraySegment<byte> bytes)
     {
-        var typeName = typeof(Type).FullName;
-        System.Func<byte[], object> fun;
+        var typeName = typeof(T).FullName;
+        System.Func<ArraySegment<byte>, object> fun;
         if (deserializeDict.TryGetValue(typeName, out fun)) {
             return (T)fun(bytes);
         }
@@ -107,9 +107,9 @@ class DataPaser
         BindStructParam<Quaternion>();
         BindStructParam<Color>();
         RegisterParam<string>((args) => System.Text.Encoding.UTF8.GetBytes(args[0] as string), (bytes) => new object[1]{System.Text.Encoding.UTF8.GetString(bytes, 0, bytes.Length)});
-        RegisterType<string>(bytes => System.Text.Encoding.UTF8.GetString(bytes));
-        RegisterType<WorldMessages.CreateRoomReply>(bytes => WorldMessages.CreateRoomReply.GetRootAsCreateRoomReply(new FlatBuffers.ByteBuffer(bytes, 0)));
-        RegisterType<WorldMessages.GetRoomListReply>(bytes => WorldMessages.GetRoomListReply.GetRootAsGetRoomListReply(new FlatBuffers.ByteBuffer(bytes, 0)));
+        RegisterType<string>((bytes) => System.Text.Encoding.UTF8.GetString(bytes.Array, bytes.Offset, bytes.Count));
+        RegisterType<WorldMessages.CreateRoomReply>(bytes => WorldMessages.CreateRoomReply.GetRootAsCreateRoomReply(new FlatBuffers.ByteBuffer(bytes.Array, bytes.Offset)));
+        RegisterType<WorldMessages.GetRoomListReply>(bytes => WorldMessages.GetRoomListReply.GetRootAsGetRoomListReply(new FlatBuffers.ByteBuffer(bytes.Array, bytes.Offset)));
     }
 
     static object[] DesStruct<T>(byte[] buf) where T : struct

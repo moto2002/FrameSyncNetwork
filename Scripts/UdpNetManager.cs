@@ -4,6 +4,8 @@ using FlatBuffers;
 using System.Collections.Generic;
 public  class UdpNetManager : MonoBehaviour
 {
+    public GameObject go;
+    public string playerPrefab;
     private int nId = 0;
     private int mId = 0;
     private static UdpNetManager m_instance;
@@ -48,6 +50,12 @@ public  class UdpNetManager : MonoBehaviour
         MessageDispatcher.Instance.RegisterMsgType(MessageType.AddPlayer, OnAddPlayerCallback);
     }
 
+    void Start()
+    {
+        FrameController.Instance.Freezed = true;
+        RequestEnterRoom();
+    }
+
     void OnDestroy()
     {
         m_instance = null;
@@ -67,7 +75,10 @@ public  class UdpNetManager : MonoBehaviour
 
     void OnAddPlayerCallback(int frame, string pId, ByteBuffer bb)
     {
-        FrameController.Instance.AddPlayer(pId).GetCommand(CreateObjCmd.CreatePlayer(frame, pId));
+        FrameController.Instance.AddPlayer(pId, frame).GetCommand(CreateObjCmd.CreatePlayer(frame, playerPrefab));
+        if (pId == UserInfo.Instance.id) {
+            FrameController.Instance.Freezed = false;
+        }
     }
     void Request(MessageType type, int frame, byte[] buffer)
     {
@@ -109,6 +120,10 @@ public  class UdpNetManager : MonoBehaviour
         Request(MessageType.CreateObj, frame, Utility.DataUtility.GetDataBuffer(dataBuffer.Length - dataBuffer.Position, dataBuffer.Get, dataBuffer.Position));
     }
 
+    public void RequestEnterRoom()
+    {
+        Request(MessageType.AddPlayer, 0, new byte[0]);
+    }
     public void InvokeRpc(RpcMsg msg)
     {
         behs[msg.NetId].InvokeRpc(msg);

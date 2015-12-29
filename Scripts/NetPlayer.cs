@@ -2,11 +2,18 @@
 using System.Collections.Generic;
 
 public class NetPlayer {
+    public int EnterFrame
+    {
+        get;
+        set;
+    }
 
     Queue<IExecutable> commandQue = new Queue<IExecutable>();
     public string pId;
     public bool IsReady(int frame)
     {
+        if (frame < EnterFrame)
+            return true;
         if (commandQue.Count == 0)
             return false;
         var cmd = commandQue.Peek();
