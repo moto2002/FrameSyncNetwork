@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using System;
 public class UdpNetBehaviour : MonoBehaviour {
     class RpcMethod
     {
@@ -20,13 +21,13 @@ public class UdpNetBehaviour : MonoBehaviour {
         {
             methodInfo.Invoke(target, args);
         }
-        public void Execute(byte[] dataBuff)
+        public void Execute(ArraySegment<byte> seg)
         {
             if(attribute.rpcMsgType == null)
-                methodInfo.Invoke(target, DataPaser.BytesToParams(dataBuff, methodInfo));
+                methodInfo.Invoke(target, DataPaser.BytesToParams(seg.Array, seg.Offset, methodInfo));
             else
             {
-                object[] args = DataPaser.Instance.DeserializeToParams(attribute.rpcMsgType, dataBuff);
+                object[] args = DataPaser.Instance.DeserializeToParams(attribute.rpcMsgType, seg);
                 methodInfo.Invoke(target, args);
             }
 
@@ -87,7 +88,7 @@ public class UdpNetBehaviour : MonoBehaviour {
 
     public void InvokeRpc(Messages.RpcMsg msg)
     {
-        var buf = msg.GetArgbufBytes().Value.Array;
+        var buf = msg.GetArgbufBytes().Value;
         rpcTbl[msg.Method].Execute(buf);
     }
 }

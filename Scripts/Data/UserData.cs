@@ -6,6 +6,6 @@ public class UserData
     public string id;
 
     public UserData(){
-        id = System.Guid.NewGuid().ToString();
+        id = System.Guid.NewGuid().ToString("N");
     }
 }

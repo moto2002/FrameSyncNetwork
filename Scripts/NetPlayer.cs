@@ -12,8 +12,8 @@ public class NetPlayer {
     public string pId;
     public bool IsReady(int frame)
     {
-        if (frame < EnterFrame)
-            return true;
+		if (frame == 0)
+			return true;
         if (commandQue.Count == 0)
             return false;
         var cmd = commandQue.Peek();
@@ -34,7 +34,8 @@ public class NetPlayer {
             if (cmd.Frame == frame)
             {
                 commandQue.Dequeue();
-                cmd.Execute();
+				if(!(cmd is EmptyObj))
+                	cmd.Execute();
             }
             else if (cmd.Frame > frame)
                 break;

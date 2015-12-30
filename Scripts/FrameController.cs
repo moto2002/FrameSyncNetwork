@@ -10,18 +10,15 @@ public class FrameController : AutoCreateSingleTon<FrameController> {
         get {
             int next = Frame + 1;
             if (next % ExecuteFrame == 0) {
-                return next + PushBack;
+				return next + PushBack * ExecuteFrame;
             }
             return next + (ExecuteFrame - next % ExecuteFrame) + PushBack * ExecuteFrame;
         }
     }
 
-    EmptyCommandEmiter ece;
+	EmptyCommandEmiter ece = new EmptyCommandEmiter();
 
     public void RegisterCommand() {
-        if (ece == null) {
-            ece = new EmptyCommandEmiter();
-        }
         ece.AddCommand(Frame);
     }
     public float DeltaTime
@@ -29,10 +26,9 @@ public class FrameController : AutoCreateSingleTon<FrameController> {
         get;
         private set;
     }
-    public bool Freezed
-    {
-        get;
-        set;
+    public bool Freezed {
+		get;
+		set;
     }
     public int Frame
     {
@@ -61,7 +57,11 @@ public class FrameController : AutoCreateSingleTon<FrameController> {
 	void Start () {
         DeltaTime = 0.02f;
 	}
-	
+
+    public void StartFrameLoop()
+    {
+        lastUpdateTime = Time.realtimeSinceStartup;
+    }
 	// Update is called once per frame
 	void Update () {
         if (Freezed)
@@ -74,7 +74,8 @@ public class FrameController : AutoCreateSingleTon<FrameController> {
 
     void FrameUpdate()
     {
-        if (Frame >= ExecuteFrame && Frame % ExecuteFrame == 0)
+		ece.Update(Frame);
+        if (Frame % ExecuteFrame == 0)
         {
             if (AllReady()) {
                 players.ForEach(x => x.ProcessCommand(Frame));
@@ -88,7 +89,6 @@ public class FrameController : AutoCreateSingleTon<FrameController> {
 
     void Step()
     {
-
         backUp.Clear();
         for (int i = 0, iMax = behaviours.Count; i < iMax; i++)
         {

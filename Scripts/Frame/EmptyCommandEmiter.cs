@@ -18,7 +18,7 @@ public class EmptyCommandEmiter
         int interval = FrameController.ExecuteFrame;
         if (frame % interval == interval - 1 &&  frame - lastCmdFrame >= interval) {
             lastCmdFrame = frame;
-            UdpNetManager.Instance.RequestEmpty(frame + FrameController.PushBack);
+			UdpNetManager.Instance.RequestEmpty(frame + 1 + FrameController.PushBack * interval);
         }
     }
 }

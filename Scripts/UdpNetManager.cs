@@ -2,10 +2,10 @@
 using Messages;
 using FlatBuffers;
 using System.Collections.Generic;
+using Utility;
 public  class UdpNetManager : MonoBehaviour
 {
-    public GameObject go;
-    public string playerPrefab;
+    public GameObject playerPrefab;
     private int nId = 0;
     private int mId = 0;
     private static UdpNetManager m_instance;
@@ -45,14 +45,16 @@ public  class UdpNetManager : MonoBehaviour
     void Awake()
     {
         m_instance = this;
-        MessageDispatcher.Instance.RegisterMsgType(MessageType.Rpc, OnRpcMsgCallback);
-        MessageDispatcher.Instance.RegisterMsgType(MessageType.CreateObj, OnCreateObjCallback);
-        MessageDispatcher.Instance.RegisterMsgType(MessageType.AddPlayer, OnAddPlayerCallback);
     }
 
     void Start()
     {
         FrameController.Instance.Freezed = true;
+        MessageDispatcher.Instance.RegisterMsgType(MessageType.Rpc, OnRpcMsgCallback);
+        MessageDispatcher.Instance.RegisterMsgType(MessageType.CreateObj, OnCreateObjCallback);
+        MessageDispatcher.Instance.RegisterMsgType(MessageType.AddPlayer, OnAddPlayerCallback);
+        MessageDispatcher.Instance.RegisterMsgType(MessageType.Empty, OnEmptyCallBack);
+        MessageDispatcher.Instance.Connect();
         RequestEnterRoom();
     }
 
@@ -60,7 +62,10 @@ public  class UdpNetManager : MonoBehaviour
     {
         m_instance = null;
     }
-
+    void OnEmptyCallBack(int frame, string pId, ByteBuffer bb)
+    {
+        FrameController.Instance.GetPlayer(pId).GetCommand(new EmptyObj(frame));
+    }
     void OnRpcMsgCallback(int frame, string pId, ByteBuffer bb)
     {
         var msg = RpcMsg.GetRootAsRpcMsg(bb);
@@ -76,14 +81,15 @@ public  class UdpNetManager : MonoBehaviour
     void OnAddPlayerCallback(int frame, string pId, ByteBuffer bb)
     {
         FrameController.Instance.AddPlayer(pId, frame).GetCommand(CreateObjCmd.CreatePlayer(frame, playerPrefab));
-        if (pId == UserInfo.Instance.id) {
+        if (pId == UserInfo.Instance.Id) {
             FrameController.Instance.Freezed = false;
+            FrameController.Instance.StartFrameLoop();
         }
     }
-    void Request(MessageType type, int frame, byte[] buffer)
+    void Request(MessageType type, int frame, System.ArraySegment<byte> buffSeg)
     {
         FlatBufferBuilder builder = new FlatBufferBuilder(1);
-        var vec = GenMessage.CreateGenMessage(builder, type, builder.CreateString(""), NextMsgId, GenMessage.CreateBufVector(builder, buffer), frame);
+        var vec = GenMessage.CreateGenMessage(builder, type, builder.CreateString(UserInfo.Instance.Id), NextMsgId, builder.CreateBuffVector(GenMessage.StartBufVector, buffSeg), frame);
         builder.Finish(vec.Value);
         MessageDispatcher.Instance.Send(builder.DataBuffer);
     }
@@ -94,12 +100,12 @@ public  class UdpNetManager : MonoBehaviour
         var vec = RpcMsg.CreateRpcMsg(builder, beh.NetId, builder.CreateString(methodName), RpcMsg.CreateArgbufVector(builder, argBuf));
         builder.Finish(vec.Value);
         var dataBuffer = builder.DataBuffer;
-        Request(MessageType.Rpc, frame, Utility.DataUtility.GetDataBuffer(dataBuffer.Length - dataBuffer.Position, dataBuffer.Get, dataBuffer.Position));
+        Request(MessageType.Rpc, frame, dataBuffer.GetArraySegment());
     }
 
     public void RequestEmpty(int frame)
     {
-        Request(MessageType.Empty, frame, new byte[0]);
+        Request(MessageType.Empty, frame, new System.ArraySegment<byte>(new byte[0]));
     }
 
     public void Instantiate(string path, Vector3 pos, Quaternion rotation)
@@ -117,12 +123,13 @@ public  class UdpNetManager : MonoBehaviour
         var vec = CreateObj.EndCreateObj(builder);
         builder.Finish(vec.Value);
         var dataBuffer = builder.DataBuffer;
-        Request(MessageType.CreateObj, frame, Utility.DataUtility.GetDataBuffer(dataBuffer.Length - dataBuffer.Position, dataBuffer.Get, dataBuffer.Position));
+        Request(MessageType.CreateObj, frame, dataBuffer.GetArraySegment());
     }
 
     public void RequestEnterRoom()
     {
-        Request(MessageType.AddPlayer, 0, new byte[0]);
+        //FrameController.Instance.RegisterCommand();
+        Request(MessageType.AddPlayer, 0, new System.ArraySegment<byte>(System.Text.Encoding.UTF8.GetBytes(UserInfo.Instance.RoomId)));
     }
     public void InvokeRpc(RpcMsg msg)
     {

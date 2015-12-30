@@ -34,6 +34,23 @@ public abstract class ExecutableCmd<T> : IExecutable
     }
 }
 
+public class EmptyObj : IExecutable
+{
+    public int Frame
+    {
+        get;
+        private set;
+    }
+    public EmptyObj(int frame)
+    {
+        this.Frame = frame;
+    }
+
+    public void Execute()
+    {
+        
+    }
+}
 public class RpcExeObj : ExecutableCmd<Messages.RpcMsg>
 {
     Messages.RpcMsg msg;
@@ -54,6 +71,7 @@ public class CreateObjCmd : ExecutableCmd<Messages.CreateObj>
     Vector3 pos;
     Quaternion rot;
     string path;
+    GameObject prefab;
     private CreateObjCmd(int frame) : base(frame)
     { }
     public CreateObjCmd(int frame, Messages.CreateObj msg)
@@ -66,12 +84,17 @@ public class CreateObjCmd : ExecutableCmd<Messages.CreateObj>
         path = msg.Path;
     }
 
-    public static CreateObjCmd CreatePlayer(int frame, string playerPrefab)
+    public static CreateObjCmd CreatePlayer(int frame, GameObject playerPrefab)
     {
-        return new CreateObjCmd(frame) { pos = Vector3.zero, rot = Quaternion.identity, path = playerPrefab};
+        return new CreateObjCmd(frame) { pos = Vector3.zero, rot = Quaternion.identity, prefab = playerPrefab };
     }
     public override void Execute()
     {
-        GameObject.Instantiate(Resources.Load(path), pos, rot);
+        GameObject go;
+        if (prefab != null)
+            go = GameObject.Instantiate(prefab, pos, rot) as GameObject;
+        else
+            go = GameObject.Instantiate(Resources.Load(path), pos, rot) as GameObject;
+        go.GetComponent<FrameBehaviour>().Init();
     }
 }

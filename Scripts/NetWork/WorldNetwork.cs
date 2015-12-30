@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using WorldMessages;
 using FlatBuffers;
+using Utility;
 public class WorldNetwork : AutoCreateSingleTon<WorldNetwork> {
+    public string RoomSceneName;
     public string Ip = "127.0.0.1";
     public int port = 2015;
     sealed class WaitReplyItem
@@ -80,12 +82,11 @@ public class WorldNetwork : AutoCreateSingleTon<WorldNetwork> {
     {
         client.Send(bb.Data, bb.Position, bb.Length - bb.Position);  
     }
-    public void Send<ReplyType>(MessageType type, ByteBuffer bb, Action<ReplyType> callBack)
+    public void Send<ReplyType>(MessageType type, ArraySegment<byte> buffSegment, Action<ReplyType> callBack)
     {
         int mId = MsgId;
         FlatBufferBuilder fb = new FlatBufferBuilder(1);
-        var bytes = Utility.DataUtility.GetDataBuffer(bb.Length - bb.Position, bb.Get, bb.Position);
-        var vec = WorldMessage.CreateWorldMessage(fb, type, fb.CreateString(UserInfo.Instance.id), WorldMessage.CreateBuffVector(fb, bytes), mId);
+        var vec = WorldMessage.CreateWorldMessage(fb, type, fb.CreateString(UserInfo.Instance.Id), fb.CreateBuffVector(WorldMessage.StartBuffVector, buffSegment), mId);
         fb.Finish(vec.Value);
         Action<ArraySegment<byte>> action = (recvBytes) =>
         {
@@ -100,8 +101,9 @@ public class WorldNetwork : AutoCreateSingleTon<WorldNetwork> {
 	
 	}
 
-    void OnDestroy()
+    protected override void OnDestroy()
     {
+        base.OnDestroy();
         client.Dispose();
     }
 }

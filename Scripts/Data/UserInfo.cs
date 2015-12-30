@@ -7,17 +7,18 @@ using System.Text;
 public class UserInfo
 {
     UserData data;
-    static UserData mInstance;
-    public static UserData Instance{
+    static UserInfo mInstance;
+    public static UserInfo Instance
+    {
         get {
             if (mInstance == null) {
-                mInstance = new UserData();
+                mInstance = new UserInfo();
             }
             return mInstance;
         }
     }
-    private UserInfo() { 
-        
+    private UserInfo() {
+        data = new UserData();
     }
 
     public void Init(UserData data)
@@ -29,5 +30,11 @@ public class UserInfo
         get {
             return data.id;
         }
+    }
+
+    public string RoomId
+    {
+        get;
+        set;
     }
 }

@@ -22,7 +22,7 @@ class DataPaser
     }
     struct ParseMethod : IBufferRW
     {
-        public Func<byte[], object[]> desMethod;
+        public Func<ArraySegment<byte>, object[]> desMethod;
         public Func<object[], byte[]> serMethod;
 
         public byte[] Serilize(object[] args)
@@ -30,9 +30,9 @@ class DataPaser
             return serMethod(args);
         }
 
-        public object[] Deserilize(byte[] bytes)
+        public object[] Deserilize(ArraySegment<byte> buffSegment)
         {
-            return desMethod(bytes);
+            return desMethod(buffSegment);
         }
     }
     Dictionary<string, IBufferRW> paramDict = new Dictionary<string, IBufferRW>();
@@ -74,19 +74,19 @@ class DataPaser
         throw new TypeNotRegisteredException(type.Name);
     }
 
-    public object[] DeserializeToParams(System.Type type, byte[] bytes)
+    public object[] DeserializeToParams(System.Type type, ArraySegment<byte> buffSegment)
     {
         IBufferRW rw;
         if (paramDict.TryGetValue(type.Name, out rw))
         {
-            return rw.Deserilize(bytes);
+            return rw.Deserilize(buffSegment);
         }
         throw new TypeNotRegisteredException(type.FullName);
     }
 
-    public object[] DeserializeToParams<T>(byte[] bytes)
+    public object[] DeserializeToParams<T>(ArraySegment<byte> buffSegment)
     {
-        return DeserializeToParams(typeof(T), bytes);
+        return DeserializeToParams(typeof(T), buffSegment);
     }
 
     void BindStructParam<T>() where T : struct
@@ -94,7 +94,7 @@ class DataPaser
         paramDict[typeof(T).Name] = new ParseMethod() { serMethod = SerStruct<T>, desMethod = DesStruct<T>};
     }
 
-    public void RegisterParam<T>(System.Func<object[], byte[]> ser, System.Func<byte[], object[]> deser)
+    public void RegisterParam<T>(System.Func<object[], byte[]> ser, System.Func<ArraySegment<byte>, object[]> deser)
     {
         paramDict[typeof(T).Name] = new ParseMethod() { serMethod = ser, desMethod = deser};
     }
@@ -106,16 +106,16 @@ class DataPaser
         BindStructParam<Vector3>();
         BindStructParam<Quaternion>();
         BindStructParam<Color>();
-        RegisterParam<string>((args) => System.Text.Encoding.UTF8.GetBytes(args[0] as string), (bytes) => new object[1]{System.Text.Encoding.UTF8.GetString(bytes, 0, bytes.Length)});
+        RegisterParam<string>((args) => System.Text.Encoding.UTF8.GetBytes(args[0] as string), (seg) => new object[1]{System.Text.Encoding.UTF8.GetString(seg.Array, seg.Offset, seg.Count)});
         RegisterType<string>((bytes) => System.Text.Encoding.UTF8.GetString(bytes.Array, bytes.Offset, bytes.Count));
         RegisterType<WorldMessages.CreateRoomReply>(bytes => WorldMessages.CreateRoomReply.GetRootAsCreateRoomReply(new FlatBuffers.ByteBuffer(bytes.Array, bytes.Offset)));
         RegisterType<WorldMessages.GetRoomListReply>(bytes => WorldMessages.GetRoomListReply.GetRootAsGetRoomListReply(new FlatBuffers.ByteBuffer(bytes.Array, bytes.Offset)));
     }
 
-    static object[] DesStruct<T>(byte[] buf) where T : struct
+    static object[] DesStruct<T>(ArraySegment<byte> seg) where T : struct
     {
-        T o = (T)Utility.DataUtility.BytesToStruct(typeof(T), buf);
-        return new object[] { o};
+        T o = (T)Utility.DataUtility.BytesToStruct(typeof(T), seg.Array, seg.Offset);
+        return new object[] { o };
     }
 
 
@@ -180,11 +180,11 @@ class DataPaser
         return ret;
     }
 
-    public static object[] BytesToParams(byte[] bytes, System.Reflection.MethodInfo methodInfo)
+    public static object[] BytesToParams(byte[] bytes, int _offset, System.Reflection.MethodInfo methodInfo)
     {
         var parameters = methodInfo.GetParameters();
         object[] ret = new object[parameters.Length];
-        int offset = 0;
+		int offset = _offset;
         for (int i = 0; i < parameters.Length; i++)
         {
             var type = parameters[i].ParameterType;
@@ -212,6 +212,8 @@ class DataPaser
                 ret[i] = array;
                 offset += sizeof(int) + elemSize * length;
             }
+			if(offset >= bytes.Length)
+				throw new ArgumentOutOfRangeException();
         }
         return ret;
     }
