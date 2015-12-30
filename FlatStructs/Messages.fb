@@ -24,6 +24,14 @@ struct Quat
 	w:float;
 }
 
+struct Color4
+{
+	r:float;
+	g:float;
+	b:float;
+	a:float;
+}
+
 table RpcMsg
 {
 	netId:int;

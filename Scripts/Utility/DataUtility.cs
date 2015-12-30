@@ -25,15 +25,31 @@ namespace Utility
 
         public static int WriteStructToBytes(object obj, byte[] dest, int offset)
         {
-            int size = Marshal.SizeOf(obj.GetType());
-            WriteStructToBytes(obj, dest, offset, size);
-            return size;
+            Type type = obj.GetType();
+            if (type == typeof(Vector3))
+            {
+                Vector3 c = (Vector3)obj;
+                unsafe
+                {
+                    fixed (void* vp = &dest[offset])
+                    {
+                        ((Vector3*)(vp))[0] = c;
+                    }
+                }
+                return Marshal.SizeOf(type);
+            }
+            else
+            {
+                int size = Marshal.SizeOf(type);
+                WriteStructToBytes(obj, dest, offset, size);
+                return size;
+            }
         }
 
         public static void WriteStructToBytes(object obj, byte[] dest, int offset, int size)
         {
             IntPtr structPtr = Marshal.AllocHGlobal(size);
-            Marshal.StructureToPtr(obj, structPtr, false);
+            Marshal.StructureToPtr(obj, structPtr, true);
             Marshal.Copy(structPtr, dest, offset, size);
             Marshal.FreeHGlobal(structPtr);
         }

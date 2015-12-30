@@ -9,10 +9,10 @@ public class UdpNetBehaviour : MonoBehaviour {
         public MethodInfo methodInfo;
         public object target;
         public UdpRpc attribute;
-        public byte[] GetParamBuf(object[] args)
+        public ArraySegment<byte> GetParamBuf(object[] args)
         {
             if (attribute.rpcMsgType == null)
-                return DataPaser.ParamObjectsToBytes(args);
+                return new ArraySegment<byte>(DataPaser.ParamObjectsToBytes(args));
             else
                 return DataPaser.Instance.SerializeParams(attribute.rpcMsgType, args);
         }

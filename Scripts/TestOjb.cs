@@ -16,7 +16,7 @@ public class TestOjb : FrameSingleton<TestOjb>
     // Use this for initialization
     // Update is called once per frame
 
-    [UdpRpc(rpcMsgType = typeof(Vector3))]
+    [UdpRpc()]
     public void MoveTo(Vector3 pos)
     {
         transform.position = pos;

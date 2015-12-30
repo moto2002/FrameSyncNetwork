@@ -5,7 +5,7 @@ using System.Text;
 
 interface IBufferRW
 {
-    byte[] Serilize(object[] args);
+    ArraySegment<byte> Serilize(object[] args);
     object[] Deserilize(ArraySegment<byte> dataBuffSeg);
 }
 

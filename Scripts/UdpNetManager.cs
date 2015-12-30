@@ -3,6 +3,7 @@ using Messages;
 using FlatBuffers;
 using System.Collections.Generic;
 using Utility;
+using System;
 public  class UdpNetManager : MonoBehaviour
 {
     public GameObject playerPrefab;
@@ -94,10 +95,10 @@ public  class UdpNetManager : MonoBehaviour
         MessageDispatcher.Instance.Send(builder.DataBuffer);
     }
 
-    public void RequestRpc(int frame, UdpNetBehaviour beh, string methodName, byte[] argBuf)
+    public void RequestRpc(int frame, UdpNetBehaviour beh, string methodName, ArraySegment<byte> seg)
     {
         var builder = new FlatBufferBuilder(1);
-        var vec = RpcMsg.CreateRpcMsg(builder, beh.NetId, builder.CreateString(methodName), RpcMsg.CreateArgbufVector(builder, argBuf));
+        var vec = RpcMsg.CreateRpcMsg(builder, beh.NetId, builder.CreateString(methodName), builder.CreateBuffVector(RpcMsg.StartArgbufVector, seg));
         builder.Finish(vec.Value);
         var dataBuffer = builder.DataBuffer;
         Request(MessageType.Rpc, frame, dataBuffer.GetArraySegment());

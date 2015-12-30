@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Runtime.InteropServices;
+using Messages;
+using Utility;
 class DataPaser
 {
     class TypeNotRegisteredException : System.Exception
@@ -23,9 +25,9 @@ class DataPaser
     struct ParseMethod : IBufferRW
     {
         public Func<ArraySegment<byte>, object[]> desMethod;
-        public Func<object[], byte[]> serMethod;
+        public Func<object[], ArraySegment<byte>> serMethod;
 
-        public byte[] Serilize(object[] args)
+        public ArraySegment<byte> Serilize(object[] args)
         {
             return serMethod(args);
         }
@@ -64,7 +66,7 @@ class DataPaser
         }
         throw new TypeNotRegisteredException(typeName);
     }
-    public byte[] SerializeParams(Type type, object[] objs)
+    public ArraySegment<byte> SerializeParams(Type type, object[] objs)
     {
         IBufferRW rw;
         if (paramDict.TryGetValue(type.Name, out rw))
@@ -94,7 +96,7 @@ class DataPaser
         paramDict[typeof(T).Name] = new ParseMethod() { serMethod = SerStruct<T>, desMethod = DesStruct<T>};
     }
 
-    public void RegisterParam<T>(System.Func<object[], byte[]> ser, System.Func<ArraySegment<byte>, object[]> deser)
+    public void RegisterParam<T>(System.Func<object[], ArraySegment<byte>> ser, System.Func<ArraySegment<byte>, object[]> deser)
     {
         paramDict[typeof(T).Name] = new ParseMethod() { serMethod = ser, desMethod = deser};
     }
@@ -105,8 +107,32 @@ class DataPaser
         BindStructParam<double>();
         BindStructParam<Vector3>();
         BindStructParam<Quaternion>();
-        BindStructParam<Color>();
-        RegisterParam<string>((args) => System.Text.Encoding.UTF8.GetBytes(args[0] as string), (seg) => new object[1]{System.Text.Encoding.UTF8.GetString(seg.Array, seg.Offset, seg.Count)});
+        RegisterParam<Color>(
+            (args) =>
+            {
+                Color c = (Color)args[0];
+                byte[] buf = new byte[sizeof(float) * 4];
+                unsafe {
+                    fixed (void* vp = buf) {
+                        float* fp = (float*)vp;
+                        fp[0] = c.r;
+                        fp[1] = c.g;
+                        fp[2] = c.b;
+                        fp[3] = c.a;
+                    }
+                }
+                return new ArraySegment<byte>(buf);
+            }, 
+            (seg) => {
+               unsafe {
+                   fixed (void* vp = &seg.Array[seg.Offset]) {
+                       float* fp = (float*)vp;
+                       return new object[] { new Color(fp[0], fp[1], fp[2], fp[3]) };
+                   }
+               }
+            }
+        );
+        RegisterParam<string>((args) => new ArraySegment<byte>(System.Text.Encoding.UTF8.GetBytes(args[0] as string)), (seg) => new object[1]{System.Text.Encoding.UTF8.GetString(seg.Array, seg.Offset, seg.Count)});
         RegisterType<string>((bytes) => System.Text.Encoding.UTF8.GetString(bytes.Array, bytes.Offset, bytes.Count));
         RegisterType<WorldMessages.CreateRoomReply>(bytes => WorldMessages.CreateRoomReply.GetRootAsCreateRoomReply(new FlatBuffers.ByteBuffer(bytes.Array, bytes.Offset)));
         RegisterType<WorldMessages.GetRoomListReply>(bytes => WorldMessages.GetRoomListReply.GetRootAsGetRoomListReply(new FlatBuffers.ByteBuffer(bytes.Array, bytes.Offset)));
@@ -119,9 +145,9 @@ class DataPaser
     }
 
 
-    static byte[] SerStruct<T>(object[] args)
+    static ArraySegment<byte> SerStruct<T>(object[] args)
     {
-        return StructToBytes(typeof(T), args[0]);
+        return new ArraySegment<byte>(StructToBytes(typeof(T), args[0]));
     }
     static byte[] StructToBytes(System.Type type, object o)
     {
@@ -153,8 +179,8 @@ class DataPaser
                 }
             }
         }
-        length = 0;
         byte[] ret = new byte[length];
+        length = 0;
         for (int i = 0; i < args.Length; i++)
         {
             var item = args[i];

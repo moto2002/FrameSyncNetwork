@@ -44,7 +44,7 @@ public class MessageDispatcher : MonoBehaviour
     void OnMessageReceived(byte[] bytes)
     {
         GenMessage msg = GenMessage.GetRootAsGenMessage(new ByteBuffer(bytes, 0));
-		Debug.Log(string.Format("RoomMsg: {0}, Frame: {1}", msg.MsgType, msg.Frame));
+		//Debug.Log(string.Format("RoomMsg: {0}, Frame: {1}", msg.MsgType, msg.Frame));
         var buffSeg = msg.GetBufBytes().Value;
         ByteBuffer bb = new ByteBuffer(buffSeg.Array, buffSeg.Offset);
         actionDict[msg.MsgType](msg.Frame, msg.PId, bb);
