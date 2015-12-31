@@ -45,6 +45,12 @@ public class FrameController : AutoCreateSingleTon<FrameController> {
         players.Add(ret);
         return ret;
     }
+
+    public int AlreadyPlayerCount {
+        get {
+            return players.Count;
+        }
+    }
     public NetPlayer GetPlayer(string id)
     {
         return players.Find(x => x.pId == id);
@@ -103,6 +109,11 @@ public class FrameController : AutoCreateSingleTon<FrameController> {
         behaviours = backUp;
         backUp = t;
         Frame++;
+    }
+
+    void ProcessCommands()
+    { 
+    
     }
 
     bool AllReady()

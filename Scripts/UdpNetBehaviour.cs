@@ -33,6 +33,8 @@ public class UdpNetBehaviour : MonoBehaviour {
 
         }
     }
+    [HideInInspector]
+    public string ownerId;
     Dictionary<string, RpcMethod> rpcTbl = new Dictionary<string, RpcMethod>();
     public int NetId
     {
@@ -74,7 +76,6 @@ public class UdpNetBehaviour : MonoBehaviour {
             if (attrs.Length > 0)
             { 
                 rpcTbl[m.Name] = new RpcMethod() { methodInfo = m, target = comp, attribute = attrs[0] as UdpRpc};
-                Debug.Log(m.Name);
             }
         }
     }

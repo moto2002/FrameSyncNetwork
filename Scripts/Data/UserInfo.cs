@@ -32,7 +32,7 @@ public class UserInfo
         }
     }
 
-    public string RoomId
+    public Room Room
     {
         get;
         set;

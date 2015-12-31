@@ -5,11 +5,8 @@ using WorldMessages;
 using System;
 public class WorldUITest : MonoBehaviour
 {
-    sealed class Room {
-        public string id;
-        public int playerCount;
-    }
     List<Room> rooms = new List<Room>();
+    string numStr = "Input Room Capacity";
     // Use this for initialization
     void Start()
     {
@@ -28,16 +25,21 @@ public class WorldUITest : MonoBehaviour
                 for (int i = 0, imax = msg.RoomLength; i < imax; i++)
                 {
                     var item = msg.GetRoom(i);
-                    rooms.Add(new Room() { id = item.Id, playerCount = item.PlayerCount});
+                    rooms.Add(new Room() { id = item.Id, playerCount = item.PlayerCount, capacity = item.Capacity});
                 }
             });
         }
+        numStr = GUILayout.TextArea(numStr, GUILayout.MinWidth(200));
         if (GUILayout.Button("CreateRoom"))
         {
-            WorldNetwork.Instance.Send<CreateRoomReply>(MessageType.CreateRoom, new ArraySegment<byte>(new byte[0]), (msg) =>
+            int capacity = 0;
+            if (int.TryParse(numStr, out capacity))
             {
-                rooms.Add(new Room() { id = msg.Id, playerCount = 1});
-            });
+                WorldNetwork.Instance.Send<CreateRoomReply>(MessageType.CreateRoom, new ArraySegment<byte>(System.BitConverter.GetBytes(capacity)), (msg) =>
+                {
+                    rooms.Add(new Room() { id = msg.Id, playerCount = 0 , capacity = msg.Capacity});
+                });
+            }
         }
         GUILayout.EndHorizontal();
         GUILayout.Label("rooms: ");
@@ -45,7 +47,7 @@ public class WorldUITest : MonoBehaviour
         for (int i = 0, imax = rooms.Count; i < imax; i++)
         {
             if (GUILayout.Button(string.Format("Id: {0}, PlayerCount: {1}", rooms[i].id, rooms[i].playerCount))) {
-                UserInfo.Instance.RoomId = rooms[i].id;
+				UserInfo.Instance.Room = rooms[i];
                 Application.LoadLevel(WorldNetwork.Instance.RoomSceneName);
             }
         }

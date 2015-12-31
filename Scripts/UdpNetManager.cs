@@ -76,13 +76,14 @@ public  class UdpNetManager : MonoBehaviour
     void OnCreateObjCallback(int frame, string pId, ByteBuffer bb)
     {
         var msg = CreateObj.GetRootAsCreateObj(bb);
-        FrameController.Instance.GetPlayer(pId).GetCommand(new CreateObjCmd(frame, msg));
+        FrameController.Instance.GetPlayer(pId).GetCommand(new CreateObjCmd(frame, pId, msg));
     }
 
     void OnAddPlayerCallback(int frame, string pId, ByteBuffer bb)
     {
-        FrameController.Instance.AddPlayer(pId, frame).GetCommand(CreateObjCmd.CreatePlayer(frame, playerPrefab));
-        if (pId == UserInfo.Instance.Id) {
+        FrameController.Instance.AddPlayer(pId, frame).GetCommand(CreateObjCmd.CreatePlayer(frame, pId, playerPrefab));
+        if (FrameController.Instance.AlreadyPlayerCount == UserInfo.Instance.Room.capacity)
+        {
             FrameController.Instance.Freezed = false;
             FrameController.Instance.StartFrameLoop();
         }
@@ -92,6 +93,7 @@ public  class UdpNetManager : MonoBehaviour
         FlatBufferBuilder builder = new FlatBufferBuilder(1);
         var vec = GenMessage.CreateGenMessage(builder, type, builder.CreateString(UserInfo.Instance.Id), NextMsgId, builder.CreateBuffVector(GenMessage.StartBufVector, buffSeg), frame);
         builder.Finish(vec.Value);
+		Debug.Log (string.Format("{0}: Send Frame {1} To {2}", UserInfo.Instance.Id, frame, "All"));
         MessageDispatcher.Instance.Send(builder.DataBuffer);
     }
 
@@ -130,7 +132,7 @@ public  class UdpNetManager : MonoBehaviour
     public void RequestEnterRoom()
     {
         //FrameController.Instance.RegisterCommand();
-        Request(MessageType.AddPlayer, 0, new System.ArraySegment<byte>(System.Text.Encoding.UTF8.GetBytes(UserInfo.Instance.RoomId)));
+        Request(MessageType.AddPlayer, 0, new System.ArraySegment<byte>(System.Text.Encoding.UTF8.GetBytes(UserInfo.Instance.Room.id)));
     }
     public void InvokeRpc(RpcMsg msg)
     {

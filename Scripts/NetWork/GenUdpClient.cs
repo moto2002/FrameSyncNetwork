@@ -36,13 +36,18 @@ public class GenUdpClient : IDisposable
     }
 
     void RecvAsync(IAsyncResult res)
-    { 
-        var bytes = client.EndReceive(res, ref endPoint);
-        lock(msgQue){
-            msgQue.Enqueue(bytes);
-        }
-        if (!IsDisposed) {
-            client.BeginReceive(RecvAsync, null);
+    {
+        lock (this)
+        {
+            var bytes = client.EndReceive(res, ref endPoint);
+            lock (msgQue)
+            {
+                msgQue.Enqueue(bytes);
+            }
+            if (!IsDisposed)
+            {
+                client.BeginReceive(RecvAsync, null);
+            }
         }
     }
 
@@ -67,11 +72,17 @@ public class GenUdpClient : IDisposable
 
     public void Send(byte[] bytes)
     {
-        client.Send(bytes, bytes.Length);
+        lock (this)
+        {
+            client.Send(bytes, bytes.Length);
+        }
     }
 
     public void Send(byte[] buf, int offset, int count)
     {
-        client.Client.Send(buf, offset, count, SocketFlags.None);
+        lock (this)
+        {
+            client.Client.Send(buf, offset, count, SocketFlags.None);
+        }
     }
 }

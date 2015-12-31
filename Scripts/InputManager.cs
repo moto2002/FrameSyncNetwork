@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+using Utility;
 public class InputManager : MonoBehaviour {
 	// Use this for initialization
     Color[] colors = new Color[] { Color.red, Color.blue, Color.green, Color.yellow };
@@ -10,12 +10,14 @@ public class InputManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        if (TestObj.Instance == null)
+            return;
         if (Input.GetMouseButtonDown(0))
         {
             Vector3 pos;
             if (GetHitPos(out pos))
             {
-                TestObj.Instance.GetComponent<UdpNetBehaviour>().RPC("MoveTo", RPCMode.All, pos);
+                TestObj.Instance.GetUdpNetwork().RPC("MoveTo", RPCMode.All, pos);
             }
             return;
         }
@@ -25,7 +27,7 @@ public class InputManager : MonoBehaviour {
             Vector3 pos;
             if (GetHitPos(out pos))
             {
-                TestObj.Instance.GetComponent<UdpNetBehaviour>().RPC("WalkTo", RPCMode.All, pos);
+                TestObj.Instance.GetUdpNetwork().RPC("WalkTo", RPCMode.All, pos);
             }
             return;
         }
@@ -33,10 +35,15 @@ public class InputManager : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.T))
         {
             int index = Random.Range(0, colors.Length);
-            TestObj.Instance.GetComponent<UdpNetBehaviour>().RPC("TurnColor", RPCMode.All, colors[index]);
+            TestObj.Instance.GetUdpNetwork().RPC("TurnColor", RPCMode.All, colors[index]);
+            return;
+        }
+
+        if (Input.GetKeyDown(KeyCode.S)) {
+            TestObj.Instance.GetUdpNetwork().RPC("LogString", RPCMode.All, "Hello World");
+            return;
         }
 	}
-    
     bool GetHitPos(out Vector3 pos)
     {
         var mp = Input.mousePosition;

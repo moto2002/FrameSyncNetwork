@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
-
+using Utility;
 public interface IExecutable
 {
     void Execute();
@@ -72,9 +72,12 @@ public class CreateObjCmd : ExecutableCmd<Messages.CreateObj>
     Quaternion rot;
     string path;
     GameObject prefab;
-    private CreateObjCmd(int frame) : base(frame)
-    { }
-    public CreateObjCmd(int frame, Messages.CreateObj msg)
+    string player;
+    private CreateObjCmd(int frame, string player) : base(frame)
+    {
+        this.player = player;
+    }
+    public CreateObjCmd(int frame, string player, Messages.CreateObj msg)
         : base(frame, msg)
     {
         var _pos = msg.Pos;
@@ -82,11 +85,12 @@ public class CreateObjCmd : ExecutableCmd<Messages.CreateObj>
         pos = new Vector3(_pos.X, _pos.Y, _pos.Z);
         rot = new Quaternion(_rot.X, _rot.Y, _rot.Z, _rot.W);
         path = msg.Path;
+        this.player = player;
     }
 
-    public static CreateObjCmd CreatePlayer(int frame, GameObject playerPrefab)
+    public static CreateObjCmd CreatePlayer(int frame, string player, GameObject playerPrefab)
     {
-        return new CreateObjCmd(frame) { pos = Vector3.zero, rot = Quaternion.identity, prefab = playerPrefab };
+        return new CreateObjCmd(frame, player) { pos = Vector3.zero, rot = Quaternion.identity, prefab = playerPrefab };
     }
     public override void Execute()
     {
@@ -95,6 +99,7 @@ public class CreateObjCmd : ExecutableCmd<Messages.CreateObj>
             go = GameObject.Instantiate(prefab, pos, rot) as GameObject;
         else
             go = GameObject.Instantiate(Resources.Load(path), pos, rot) as GameObject;
+        go.GetUdpNetwork().ownerId = player;
         go.GetComponent<FrameBehaviour>().Init();
     }
 }

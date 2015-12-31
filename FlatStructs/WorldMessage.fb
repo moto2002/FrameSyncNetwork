@@ -23,6 +23,7 @@ table Room
 {
 	id:string;
 	playerCount:int;
+	capacity:int;
 }
 
 table ReplyMsg
@@ -41,4 +42,5 @@ table CreateRoomReply
 {
 	errorCode:int;
 	id:string;
+	capacity:int;
 }

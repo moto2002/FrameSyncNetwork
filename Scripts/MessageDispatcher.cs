@@ -48,6 +48,7 @@ public class MessageDispatcher : MonoBehaviour
         var buffSeg = msg.GetBufBytes().Value;
         ByteBuffer bb = new ByteBuffer(buffSeg.Array, buffSeg.Offset);
         actionDict[msg.MsgType](msg.Frame, msg.PId, bb);
+		Debug.Log (string.Format("{0}: Send Frame {1} To {2}", msg.PId, msg.Frame, UserInfo.Instance.Id));
     }
 
     

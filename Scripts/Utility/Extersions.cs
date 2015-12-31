@@ -25,4 +25,17 @@ namespace Utility
             return builder.EndVector();
         }
     }
+
+    public static class ComponentExtension 
+    {
+        public static UdpNetBehaviour GetUdpNetwork(this UnityEngine.Component c)
+        {
+            return c.GetComponent<UdpNetBehaviour>();
+        }
+
+        public static UdpNetBehaviour GetUdpNetwork(this UnityEngine.GameObject g)
+        {
+            return g.GetComponent<UdpNetBehaviour>();
+        }
+    }
 }
