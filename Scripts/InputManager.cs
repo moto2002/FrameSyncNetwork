@@ -15,7 +15,7 @@ public class InputManager : MonoBehaviour {
             Vector3 pos;
             if (GetHitPos(out pos))
             {
-                TestOjb.Instance.GetComponent<UdpNetBehaviour>().RPC("MoveTo", RPCMode.All, pos);
+                TestObj.Instance.GetComponent<UdpNetBehaviour>().RPC("MoveTo", RPCMode.All, pos);
             }
             return;
         }
@@ -25,7 +25,7 @@ public class InputManager : MonoBehaviour {
             Vector3 pos;
             if (GetHitPos(out pos))
             {
-                TestOjb.Instance.GetComponent<UdpNetBehaviour>().RPC("WalkTo", RPCMode.All, pos);
+                TestObj.Instance.GetComponent<UdpNetBehaviour>().RPC("WalkTo", RPCMode.All, pos);
             }
             return;
         }
@@ -33,7 +33,7 @@ public class InputManager : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.T))
         {
             int index = Random.Range(0, colors.Length);
-            TestOjb.Instance.GetComponent<UdpNetBehaviour>().RPC("TurnColor", RPCMode.All, colors[index]);
+            TestObj.Instance.GetComponent<UdpNetBehaviour>().RPC("TurnColor", RPCMode.All, colors[index]);
         }
 	}
     

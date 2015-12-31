@@ -107,31 +107,7 @@ class DataPaser
         BindStructParam<double>();
         BindStructParam<Vector3>();
         BindStructParam<Quaternion>();
-        RegisterParam<Color>(
-            (args) =>
-            {
-                Color c = (Color)args[0];
-                byte[] buf = new byte[sizeof(float) * 4];
-                unsafe {
-                    fixed (void* vp = buf) {
-                        float* fp = (float*)vp;
-                        fp[0] = c.r;
-                        fp[1] = c.g;
-                        fp[2] = c.b;
-                        fp[3] = c.a;
-                    }
-                }
-                return new ArraySegment<byte>(buf);
-            }, 
-            (seg) => {
-               unsafe {
-                   fixed (void* vp = &seg.Array[seg.Offset]) {
-                       float* fp = (float*)vp;
-                       return new object[] { new Color(fp[0], fp[1], fp[2], fp[3]) };
-                   }
-               }
-            }
-        );
+        BindStructParam<Color>();
         RegisterParam<string>((args) => new ArraySegment<byte>(System.Text.Encoding.UTF8.GetBytes(args[0] as string)), (seg) => new object[1]{System.Text.Encoding.UTF8.GetString(seg.Array, seg.Offset, seg.Count)});
         RegisterType<string>((bytes) => System.Text.Encoding.UTF8.GetString(bytes.Array, bytes.Offset, bytes.Count));
         RegisterType<WorldMessages.CreateRoomReply>(bytes => WorldMessages.CreateRoomReply.GetRootAsCreateRoomReply(new FlatBuffers.ByteBuffer(bytes.Array, bytes.Offset)));

@@ -2,7 +2,7 @@
 using System.Collections;
 
 [UseNetBehaviour]
-public class TestOjb : FrameSingleton<TestOjb>
+public class TestObj : FrameSingleton<TestObj>
 {
     enum State{
         idle,
@@ -16,13 +16,13 @@ public class TestOjb : FrameSingleton<TestOjb>
     // Use this for initialization
     // Update is called once per frame
 
-    [UdpRpc()]
+    [UdpRpc]
     public void MoveTo(Vector3 pos)
     {
         transform.position = pos;
     }
 
-    [UdpRpc(rpcMsgType = typeof(Vector3))]
+    [UdpRpc]
     public void WalkTo(Vector3 pos)
     {
         elapsed = 0;
@@ -32,7 +32,7 @@ public class TestOjb : FrameSingleton<TestOjb>
         state = State.moving;
     }
 
-    [UdpRpc(rpcMsgType = typeof(Color))]
+    [UdpRpc]
     public void TurnColor(Color c)
     {
         GetComponent<Renderer>().material.color = c;

@@ -185,7 +185,7 @@ namespace Utility
             }
             int size = Marshal.SizeOf(type);
             IntPtr ptr = Marshal.AllocHGlobal(size);
-            Marshal.Copy(buf, 0, ptr, buf.Length);
+            Marshal.Copy(buf, offset, ptr, size);
             var ret = Marshal.PtrToStructure(ptr, type);
             Marshal.FreeHGlobal(ptr);
             return ret;
