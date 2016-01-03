@@ -36,7 +36,7 @@ public class TestObj : FrameBehaviour
 	void OnGUI()
 	{
 		if (this.GetUdpNetwork ().ownerId == UserInfo.Instance.Id) {
-			GUILayout.Label (UserInfo.Instance.Id);
+			//GUILayout.Label (UserInfo.Instance.Id);
 		}
 	}
 

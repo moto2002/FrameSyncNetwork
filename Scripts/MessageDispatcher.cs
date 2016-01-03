@@ -36,22 +36,49 @@ public class MessageDispatcher : MonoBehaviour
         client.Start(this);
     }
 
+    int bytesSend = 0;
+    int bytesReceived = 0;
+    float startTime = 0;
+    bool GameStarted = false;
+    int packSize = 0;
     public void Send(ByteBuffer bf)
-    { 
-        client.Send(bf.Data, bf.Position, bf.Length - bf.Position);
+    {
+        bytesSend += bf.Length - bf.Position;
+        client.Send(bf.Data, bf.Position, bf.Length - bf.Position);   
     }
 
     void OnMessageReceived(byte[] bytes)
     {
+        if (!GameStarted)
+        {
+            GameStarted = true;
+            startTime = Time.realtimeSinceStartup;
+        }
+        if (packSize < bytes.Length)
+        {
+            packSize = bytes.Length;
+        }
+        bytesReceived += bytes.Length;
         GenMessage msg = GenMessage.GetRootAsGenMessage(new ByteBuffer(bytes, 0));
-		//Debug.Log(string.Format("RoomMsg: {0}, Frame: {1}", msg.MsgType, msg.Frame));
         var buffSeg = msg.GetBufBytes().Value;
         ByteBuffer bb = new ByteBuffer(buffSeg.Array, buffSeg.Offset);
         actionDict[msg.MsgType](msg.Frame, msg.PId, bb);
-		Debug.Log (string.Format("{0}: Send Frame {1} To {2}", msg.PId, msg.Frame, UserInfo.Instance.Id));
     }
 
-    
+    void OnGUI()
+    {
+        if (GameStarted)
+        {
+            float et = Time.realtimeSinceStartup - startTime;
+            GUILayout.Button(string.Format("Avg  In: {0:0.00}KB/S,   Out: {1:0.00}KB/S, packSize: {2}", bytesReceived / et / 1000, bytesSend / et / 1000, packSize));
+            if (et > 10) {
+                startTime = Time.realtimeSinceStartup;
+                bytesSend = 0;
+                bytesReceived = 0;
+                packSize = 0;
+            }
+        }
+    }
 
     public void RegisterMsgType(MessageType type, System.Action<int, string, ByteBuffer> action)
     {

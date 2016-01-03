@@ -138,20 +138,10 @@ namespace Utility
         {
             if (type == typeof(int))
             {
-                unsafe { 
-                    fixed (void* p = &buf[offset])
-                    {
-                        return ((int*)p)[0];
-                    }
-                }
+                return BitConverter.ToInt32(buf, offset);
             }
             else if(type == typeof(float)){
-                unsafe {
-                    fixed (void* p = &buf[offset])
-                    {
-                        return ((float*)p)[0];
-                    }
-                }
+                return BitConverter.ToSingle(buf, offset);
             }
             else if (type == typeof(UnityEngine.Vector3))
             {

@@ -93,7 +93,7 @@ public  class UdpNetManager : MonoBehaviour
         FlatBufferBuilder builder = new FlatBufferBuilder(1);
         var vec = GenMessage.CreateGenMessage(builder, type, builder.CreateString(UserInfo.Instance.Id), NextMsgId, builder.CreateBuffVector(GenMessage.StartBufVector, buffSeg), frame);
         builder.Finish(vec.Value);
-		Debug.Log (string.Format("{0}: Send Frame {1} To {2}", UserInfo.Instance.Id, frame, "All"));
+		//Debug.Log (string.Format("{0}: Send Frame {1} To {2}", UserInfo.Instance.Id, frame, "All"));
         MessageDispatcher.Instance.Send(builder.DataBuffer);
     }
 

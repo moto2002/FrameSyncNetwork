@@ -72,17 +72,11 @@ public class GenUdpClient : IDisposable
 
     public void Send(byte[] bytes)
     {
-        lock (this)
-        {
-            client.Send(bytes, bytes.Length);
-        }
+        client.Send(bytes, bytes.Length);
     }
 
     public void Send(byte[] buf, int offset, int count)
     {
-        lock (this)
-        {
-            client.Client.Send(buf, offset, count, SocketFlags.None);
-        }
+        client.Client.Send(buf, offset, count, SocketFlags.None);
     }
 }
