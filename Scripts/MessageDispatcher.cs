@@ -35,20 +35,25 @@ public class MessageDispatcher : MonoBehaviour
         client.OnReceiveMessage = OnMessageReceived;
         client.Start(this);
     }
-
+#if TEST
     int bytesSend = 0;
     int bytesReceived = 0;
     float startTime = 0;
     bool GameStarted = false;
     int packSize = 0;
-    public void Send(ByteBuffer bf)
+#endif
+
+    public void Send(System.ArraySegment<byte> byteSeg)
     {
-        bytesSend += bf.Length - bf.Position;
-        client.Send(bf.Data, bf.Position, bf.Length - bf.Position);   
+#if TEST
+        bytesSend += byteSeg.Count;
+#endif
+		client.Send (byteSeg.Array, byteSeg.Offset, byteSeg.Count);
     }
 
     void OnMessageReceived(byte[] bytes)
     {
+#if TEST
         if (!GameStarted)
         {
             GameStarted = true;
@@ -59,18 +64,20 @@ public class MessageDispatcher : MonoBehaviour
             packSize = bytes.Length;
         }
         bytesReceived += bytes.Length;
+#endif
         GenMessage msg = GenMessage.GetRootAsGenMessage(new ByteBuffer(bytes, 0));
         var buffSeg = msg.GetBufBytes().Value;
         ByteBuffer bb = new ByteBuffer(buffSeg.Array, buffSeg.Offset);
         actionDict[msg.MsgType](msg.Frame, msg.PId, bb);
     }
-
+#if TEST
     void OnGUI()
     {
+
         if (GameStarted)
         {
             float et = Time.realtimeSinceStartup - startTime;
-            GUILayout.Button(string.Format("Avg  In: {0:0.00}KB/S,   Out: {1:0.00}KB/S, packSize: {2}", bytesReceived / et / 1000, bytesSend / et / 1000, packSize));
+            GUILayout.Button(string.Format("Avg  In: {0:0.00}KB/S,   Out: {1:0.00}KB/S, packSize: {2}", bytesReceived / et / 1024, bytesSend / et / 1024, packSize));
             if (et > 10) {
                 startTime = Time.realtimeSinceStartup;
                 bytesSend = 0;
@@ -79,7 +86,7 @@ public class MessageDispatcher : MonoBehaviour
             }
         }
     }
-
+#endif
     public void RegisterMsgType(MessageType type, System.Action<int, string, ByteBuffer> action)
     {
         actionDict[type] = action;

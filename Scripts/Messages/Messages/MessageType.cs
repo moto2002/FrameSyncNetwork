@@ -10,6 +10,7 @@ public enum MessageType : int
  Auth = 2,
  Empty = 3,
  AddPlayer = 4,
+ GetMissingCmd = 5,
 };
 
 

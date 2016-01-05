@@ -88,13 +88,14 @@ public  class UdpNetManager : MonoBehaviour
             FrameController.Instance.StartFrameLoop();
         }
     }
+
     void Request(MessageType type, int frame, System.ArraySegment<byte> buffSeg)
     {
         FlatBufferBuilder builder = new FlatBufferBuilder(1);
         var vec = GenMessage.CreateGenMessage(builder, type, builder.CreateString(UserInfo.Instance.Id), NextMsgId, builder.CreateBuffVector(GenMessage.StartBufVector, buffSeg), frame);
         builder.Finish(vec.Value);
 		//Debug.Log (string.Format("{0}: Send Frame {1} To {2}", UserInfo.Instance.Id, frame, "All"));
-        MessageDispatcher.Instance.Send(builder.DataBuffer);
+        MessageDispatcher.Instance.Send(builder.DataBuffer.GetArraySegment());
     }
 
     public void RequestRpc(int frame, UdpNetBehaviour beh, string methodName, ArraySegment<byte> seg)
@@ -133,6 +134,15 @@ public  class UdpNetManager : MonoBehaviour
     {
         //FrameController.Instance.RegisterCommand();
         Request(MessageType.AddPlayer, 0, new System.ArraySegment<byte>(System.Text.Encoding.UTF8.GetBytes(UserInfo.Instance.Room.id)));
+    }
+
+    public void RequestMissingMsg(int frame, string player)
+    {
+        var builder = new FlatBufferBuilder(1);
+        var vec = GetMissingCmd.CreateGetMissingCmd(builder, builder.CreateString(player), frame);
+        builder.Finish(vec.Value);
+        var dataBuffer = builder.DataBuffer;
+        Request(MessageType.GetMissingCmd, frame, dataBuffer.GetArraySegment());
     }
     public void InvokeRpc(RpcMsg msg)
     {

@@ -2,14 +2,30 @@
 using System.Collections.Generic;
 
 public class NetPlayer {
+    public NetPlayer()
+    {
+        lockFrame = -1;
+        lockTime = 0;
+    }
+    public const int MaxWaitFrame = 20;
+    Queue<IExecutable> commandQue = new Queue<IExecutable>();
+    Queue<IExecutable> backQue = new Queue<IExecutable>();
     public int EnterFrame
     {
         get;
         set;
     }
-
-    Queue<IExecutable> commandQue = new Queue<IExecutable>();
     public string pId;
+    public int lockFrame
+    {
+        get;
+        private set;
+    }
+    public int lockTime
+    {
+        get;
+        private set;
+    }
     public bool IsReady(int frame)
     {
 		if (frame == 0)
@@ -22,9 +38,55 @@ public class NetPlayer {
         return false;
     }
 
+    public void IncreaseFrameLockTime(int frame)
+    {
+        lockFrame = frame;
+        lockTime += 1;
+    }
+
+    public void RequestMissingCmd()
+    {
+        if (lockFrame == -1)
+            return;
+        if (pId == UserInfo.Instance.Id)
+        {
+
+        }
+        else
+        {
+            UdpNetManager.Instance.RequestMissingMsg(lockFrame, pId);
+        }
+        lockFrame = -1;
+        lockTime = 0;
+    }
+
     public void GetCommand(IExecutable cmd)
     {
-        commandQue.Enqueue(cmd);
+        backQue.Clear();
+        while (commandQue.Count > 0)
+        {
+            var peek = commandQue.Peek();
+            if (peek.Frame < cmd.Frame)
+                backQue.Enqueue(commandQue.Dequeue());
+            else
+                break;
+        }
+        if (commandQue.Count > 0)
+        {
+            var peek = commandQue.Peek();
+            if (peek.Frame == cmd.Frame)
+            {
+                commandQue.Dequeue();
+            }
+        }
+        backQue.Enqueue(cmd);
+        while (commandQue.Count > 0)
+        {
+            backQue.Enqueue(commandQue.Dequeue());
+        }
+        var t = commandQue;
+        commandQue = backQue;
+        backQue = t;
     }
 
     public void ProcessCommand(int frame)

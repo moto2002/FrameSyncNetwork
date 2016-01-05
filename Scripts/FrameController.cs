@@ -120,8 +120,15 @@ public class FrameController : AutoCreateSingleTon<FrameController> {
     {
         for (int i = 0, iMax = players.Count; i < iMax; i++)
         {
-            if (!players[i].IsReady(Frame))
+            var item = players[i];
+            if (!item.IsReady(Frame))
+            {
+                item.IncreaseFrameLockTime(Frame);
+                if (item.lockTime > NetPlayer.MaxWaitFrame) {
+                    item.RequestMissingCmd();
+                }
                 return false;
+            }
         }
         return true;
     }

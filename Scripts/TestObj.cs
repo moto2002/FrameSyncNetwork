@@ -7,12 +7,16 @@ public class TestObj : FrameBehaviour
 {
     enum State{
         idle,
-        moving
+        moving,
+        jumping
     }
+    public float jumpSpeed = 10.0f;
     State state = State.idle;
     float elapsed, total;
     float speed = 10;
     Vector3 from, to;
+    float jumpTime;
+    Vector3 jumpPos;
 
     // Use this for initialization
     // Update is called once per frame
@@ -43,12 +47,16 @@ public class TestObj : FrameBehaviour
     [UdpRpc]
     public void MoveTo(Vector3 pos)
     {
+        if (state == State.jumping)
+            return;
         transform.position = pos;
     }
 
     [UdpRpc]
     public void WalkTo(Vector3 pos)
     {
+        if (state == State.jumping)
+            return;
         elapsed = 0;
         from = transform.position;
         to = pos;
@@ -59,13 +67,24 @@ public class TestObj : FrameBehaviour
     [UdpRpc]
     public void TurnColor(Color c)
     {
-        GetComponent<Renderer>().material.color = c;
+        GetComponentInChildren<Renderer>().material.color = c;
     }
 
     [UdpRpc]
     public void LogString(string str)
     {
         Debug.Log(str);
+    }
+
+    [UdpRpc]
+    public void Jump()
+    {
+        if (state == State.jumping)
+            return;
+        elapsed = 0;
+        jumpTime = 2 * jumpSpeed / Physics.gravity.magnitude;
+        jumpPos = transform.position;
+        state = State.jumping;
     }
 
     public override void FrameUpdate()
@@ -75,11 +94,22 @@ public class TestObj : FrameBehaviour
             case State.idle:
                 break;
             case State.moving:
-                elapsed += Time.deltaTime;
+                elapsed += FrameController.Instance.DeltaTime;
                 transform.position = Vector3.Lerp(from, to, elapsed / total);
                 if (elapsed > total)
                 {
                     state = State.idle;
+                }
+                break;
+            case State.jumping:
+                elapsed += FrameController.Instance.DeltaTime;
+                if (elapsed > jumpTime)
+                {
+                    state = State.idle;
+                    transform.position = jumpPos;
+                }
+                else {
+                    transform.position = jumpPos + Vector3.up * (jumpSpeed * elapsed - Physics.gravity.magnitude * elapsed * elapsed / 2);
                 }
                 break;
         }

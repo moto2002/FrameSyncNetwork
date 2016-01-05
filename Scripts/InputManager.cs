@@ -43,6 +43,11 @@ public class InputManager : MonoBehaviour {
             TestObj.Instance.GetUdpNetwork().RPC("LogString", RPCMode.All, "Hello World");
             return;
         }
+
+        if (Input.GetKey(KeyCode.Space)) {
+            TestObj.Instance.GetUdpNetwork().RPC("Jump", RPCMode.All);
+            return;
+        }
 	}
     bool GetHitPos(out Vector3 pos)
     {
