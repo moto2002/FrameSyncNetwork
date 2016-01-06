@@ -150,11 +150,7 @@ public  class UdpNetManager : MonoBehaviour
 
     public void RequestMissingMsg(int frame, string player)
     {
-        var builder = new FlatBufferBuilder(1);
-        var vec = GetMissingCmd.CreateGetMissingCmd(builder, builder.CreateString(player), frame);
-        builder.Finish(vec.Value);
-        var dataBuffer = builder.DataBuffer;
-        Request(MessageType.GetMissingCmd, frame, dataBuffer.GetArraySegment());
+        Request(MessageType.GetMissingCmd, frame, new ArraySegment<byte>(System.Text.Encoding.UTF8.GetBytes(player)));
     }
     public void InvokeRpc(RpcMsg msg)
     {
@@ -165,7 +161,11 @@ public  class UdpNetManager : MonoBehaviour
     { 
         GenMessage msg;
         if(latestCommands.TryGetEnum(x => x.Frame == frame, out msg)){
-            MessageDispatcher.Instance.Send(msg.ByteBuffer.GetArraySegment());
+			FlatBufferBuilder builder = new FlatBufferBuilder(1);
+			var newMsgId = NextMsgId;
+			var vec = GenMessage.CreateGenMessage(builder, msg.MsgType, builder.CreateString(msg.PId), newMsgId, builder.CreateBuffVector(GenMessage.StartBufVector, msg.GetBufBytes().Value), msg.Frame);
+			builder.Finish(vec.Value);
+			MessageDispatcher.Instance.Send(builder.DataBuffer.GetArraySegment());
         }
     }
 }
