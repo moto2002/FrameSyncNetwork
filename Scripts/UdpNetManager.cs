@@ -11,6 +11,13 @@ public  class UdpNetManager : MonoBehaviour
     private int mId = 0;
     private static UdpNetManager m_instance;
     private List<UdpNetBehaviour> behs = new List<UdpNetBehaviour>();
+    LenthFixedQueue<GenMessage> latestCommands = new LenthFixedQueue<GenMessage>(FrameController.PushBack * 4);
+
+    public int FutureFrame
+    {
+        get;
+        private set;
+    }
     public int NextNetId
     {
         get {
@@ -95,7 +102,12 @@ public  class UdpNetManager : MonoBehaviour
         var vec = GenMessage.CreateGenMessage(builder, type, builder.CreateString(UserInfo.Instance.Id), NextMsgId, builder.CreateBuffVector(GenMessage.StartBufVector, buffSeg), frame);
         builder.Finish(vec.Value);
 		//Debug.Log (string.Format("{0}: Send Frame {1} To {2}", UserInfo.Instance.Id, frame, "All"));
+        var seg = GenMessage.GetRootAsGenMessage(builder.DataBuffer);
         MessageDispatcher.Instance.Send(builder.DataBuffer.GetArraySegment());
+        if (type != MessageType.GetMissingCmd) {
+            latestCommands.Enqueue(seg);
+            FutureFrame = frame;
+        }
     }
 
     public void RequestRpc(int frame, UdpNetBehaviour beh, string methodName, ArraySegment<byte> seg)
@@ -147,5 +159,13 @@ public  class UdpNetManager : MonoBehaviour
     public void InvokeRpc(RpcMsg msg)
     {
         behs[msg.NetId].InvokeRpc(msg);
+    }
+
+    public void ResendMessage(int frame)
+    { 
+        GenMessage msg;
+        if(latestCommands.TryGetEnum(x => x.Frame == frame, out msg)){
+            MessageDispatcher.Instance.Send(msg.ByteBuffer.GetArraySegment());
+        }
     }
 }

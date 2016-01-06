@@ -100,6 +100,9 @@ public class CreateObjCmd : ExecutableCmd<Messages.CreateObj>
         else
             go = GameObject.Instantiate(Resources.Load(path), pos, rot) as GameObject;
         go.GetUdpNetwork().ownerId = player;
-        go.GetComponent<FrameBehaviour>().Init();
+        var behaviours = go.GetComponentsInChildren<FrameBehaviour>(false);
+        for (int i = 0; i < behaviours.Length; i++) {
+            behaviours[i].Init();
+        }
     }
 }

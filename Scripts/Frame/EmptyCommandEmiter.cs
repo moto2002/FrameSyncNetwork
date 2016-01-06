@@ -17,7 +17,7 @@ public class EmptyCommandEmiter
     public void Update(int frame) {
         int interval = FrameController.ExecuteFrame;
         if (frame % interval == interval - 1 &&  frame - lastCmdFrame >= interval) {
-            lastCmdFrame = frame;
+            AddCommand(frame);
 			UdpNetManager.Instance.RequestEmpty(frame + 1 + FrameController.PushBack * interval);
         }
     }

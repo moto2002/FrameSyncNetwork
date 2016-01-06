@@ -50,7 +50,7 @@ public class NetPlayer {
             return;
         if (pId == UserInfo.Instance.Id)
         {
-
+            UdpNetManager.Instance.ResendMessage(lockFrame);
         }
         else
         {
@@ -62,6 +62,8 @@ public class NetPlayer {
 
     public void GetCommand(IExecutable cmd)
     {
+        if (cmd.Frame < FrameController.Instance.Frame)
+            return;
         backQue.Clear();
         while (commandQue.Count > 0)
         {

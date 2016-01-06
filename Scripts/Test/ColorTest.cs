@@ -5,6 +5,5 @@ using System.Runtime.InteropServices;
 public class ColorTest : MonoBehaviour {
     void OnEnable()
     {
-        
     }
 }

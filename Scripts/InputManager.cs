@@ -4,13 +4,13 @@ using Utility;
 public class InputManager : MonoBehaviour {
 	// Use this for initialization
     Color[] colors = new Color[] { Color.red, Color.blue, Color.green, Color.yellow };
-	void Start () {
-	
-	}
 	
 	// Update is called once per frame
 	void Update () {
         if (TestObj.Instance == null)
+            return;
+        int exeFrame = FrameController.Instance.GetExecuteFrame;
+        if (exeFrame == UdpNetManager.Instance.FutureFrame)
             return;
         if (Input.GetMouseButtonDown(0))
         {
@@ -44,9 +44,13 @@ public class InputManager : MonoBehaviour {
             return;
         }
 
-        if (Input.GetKey(KeyCode.Space)) {
-            TestObj.Instance.GetUdpNetwork().RPC("Jump", RPCMode.All);
-            return;
+        if (Input.GetKey(KeyCode.Space))
+        {
+            if (!TestObj.Instance.IsJumping)
+            {
+                TestObj.Instance.GetUdpNetwork().RPC("Jump", RPCMode.All);
+                return;
+            }
         }
 	}
     bool GetHitPos(out Vector3 pos)

@@ -44,6 +44,11 @@ public class TestObj : FrameBehaviour
 		}
 	}
 
+    public bool IsJumping {
+        get {
+            return state == State.jumping;
+        }
+    }
     [UdpRpc]
     public void MoveTo(Vector3 pos)
     {
