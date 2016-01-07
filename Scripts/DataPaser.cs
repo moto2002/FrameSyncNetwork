@@ -100,6 +100,10 @@ class DataPaser
     {
         paramDict[typeof(T).Name] = new ParseMethod() { serMethod = ser, desMethod = deser};
     }
+	void RegisterTableType<T>(System.Func<FlatBuffers.ByteBuffer, T> decodeFun)
+	{
+		RegisterType<T>(bytes => decodeFun(new FlatBuffers.ByteBuffer(bytes.Array, bytes.Offset)));
+	}
     private DataPaser()
     {
         BindStructParam<int>();
@@ -110,9 +114,11 @@ class DataPaser
         BindStructParam<Color>();
         RegisterParam<string>((args) => new ArraySegment<byte>(System.Text.Encoding.UTF8.GetBytes(args[0] as string)), (seg) => new object[1]{System.Text.Encoding.UTF8.GetString(seg.Array, seg.Offset, seg.Count)});
         RegisterType<string>((bytes) => System.Text.Encoding.UTF8.GetString(bytes.Array, bytes.Offset, bytes.Count));
-        RegisterType<WorldMessages.CreateRoomReply>(bytes => WorldMessages.CreateRoomReply.GetRootAsCreateRoomReply(new FlatBuffers.ByteBuffer(bytes.Array, bytes.Offset)));
-        RegisterType<WorldMessages.GetRoomListReply>(bytes => WorldMessages.GetRoomListReply.GetRootAsGetRoomListReply(new FlatBuffers.ByteBuffer(bytes.Array, bytes.Offset)));
+		RegisterTableType<WorldMessages.CreateRoomReply>(WorldMessages.CreateRoomReply.GetRootAsCreateRoomReply);
+		RegisterTableType<WorldMessages.GetRoomListReply>(WorldMessages.GetRoomListReply.GetRootAsGetRoomListReply);
         RegisterType<int>(bytes => BitConverter.ToInt32(bytes.Array, bytes.Offset));
+		RegisterTableType<WorldMessages.EnterRoomReply>(WorldMessages.EnterRoomReply.GetRootAsEnterRoomReply);
+		RegisterTableType<WorldMessages.PlayerEnterRoom>(WorldMessages.PlayerEnterRoom.GetRootAsPlayerEnterRoom);
     }
 
     static object[] DesStruct<T>(ArraySegment<byte> seg) where T : struct

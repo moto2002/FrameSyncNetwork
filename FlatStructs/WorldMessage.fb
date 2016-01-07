@@ -20,6 +20,12 @@ enum EnterRoomResult : int
 	RoomNotExists
 }
 
+table PlayerEnterRoom
+{
+	roomId:string;
+	playerId:string;
+}
+
 table EnterRoomReply
 {
 	players:[string];
