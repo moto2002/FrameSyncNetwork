@@ -84,7 +84,7 @@ public class UdpNetBehaviour : MonoBehaviour {
     {
         var argBuf = rpcTbl[methodName].GetParamBuf(args);
         UdpNetManager.Instance.RequestRpc(FrameController.Instance.GetExecuteFrame, this, methodName, argBuf);
-        FrameController.Instance.RegisterCommand();
+        FrameController.Instance.RegisterCurrentCommand();
     }
 
     public void InvokeRpc(Messages.RpcMsg msg)

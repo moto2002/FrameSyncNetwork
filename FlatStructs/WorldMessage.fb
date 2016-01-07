@@ -8,7 +8,22 @@ enum MessageType : int
 	CreateRoomReply,
 	EnterRoomReply,
 	QuitRoomReply,
-	GetRoomListReply
+	GetRoomListReply,
+	PlayerEnterRoom
+}
+
+enum EnterRoomResult : int
+{
+	Ok,
+	AlreadyIn,
+	OutOfCapacity,
+	RoomNotExists
+}
+
+table EnterRoomReply
+{
+	players:[string];
+	result:EnterRoomResult;
 }
 
 table WorldMessage

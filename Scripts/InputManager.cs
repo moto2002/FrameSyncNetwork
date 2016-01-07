@@ -7,10 +7,12 @@ public class InputManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (TestObj.Instance == null)
+        if (FrameController.Instance.Frame < FrameController.ExecuteFrame)
             return;
         int exeFrame = FrameController.Instance.GetExecuteFrame;
         if (exeFrame == UdpNetManager.Instance.FutureFrame)
+            return;
+        if (TestObj.Instance == null)
             return;
         if (Input.GetMouseButtonDown(0))
         {

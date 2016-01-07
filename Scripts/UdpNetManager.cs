@@ -57,13 +57,16 @@ public  class UdpNetManager : MonoBehaviour
 
     void Start()
     {
-        FrameController.Instance.Freezed = true;
+		foreach (var item in UserInfo.Instance.Room.players) {
+			FrameController.Instance.AddPlayer(item, FrameController.ExecuteFrame);
+		}
+        //FrameController.Instance.Freezed = true;
         MessageDispatcher.Instance.RegisterMsgType(MessageType.Rpc, OnRpcMsgCallback);
         MessageDispatcher.Instance.RegisterMsgType(MessageType.CreateObj, OnCreateObjCallback);
-        MessageDispatcher.Instance.RegisterMsgType(MessageType.AddPlayer, OnAddPlayerCallback);
+        MessageDispatcher.Instance.RegisterMsgType(MessageType.ReadyForGame, OnReadyForGameCallBack);
         MessageDispatcher.Instance.RegisterMsgType(MessageType.Empty, OnEmptyCallBack);
         MessageDispatcher.Instance.Connect();
-        RequestEnterRoom();
+        ReadyForGame();
     }
 
     void OnDestroy()
@@ -86,14 +89,14 @@ public  class UdpNetManager : MonoBehaviour
         FrameController.Instance.GetPlayer(pId).GetCommand(new CreateObjCmd(frame, pId, msg));
     }
 
-    void OnAddPlayerCallback(int frame, string pId, ByteBuffer bb)
+    void OnReadyForGameCallBack(int frame, string pId, ByteBuffer bb)
     {
-        FrameController.Instance.AddPlayer(pId, frame).GetCommand(CreateObjCmd.CreatePlayer(frame, pId, playerPrefab));
-        if (FrameController.Instance.AlreadyPlayerCount == UserInfo.Instance.Room.capacity)
-        {
-            FrameController.Instance.Freezed = false;
-            FrameController.Instance.StartFrameLoop();
-        }
+        FrameController.Instance.GetPlayer(pId).GetCommand(CreateObjCmd.CreatePlayer(frame, pId, playerPrefab));
+        //if (FrameController.Instance.AlreadyPlayerCount == UserInfo.Instance.Room.capacity)
+        //{
+        //    FrameController.Instance.Freezed = false;
+        //    FrameController.Instance.StartFrameLoop();
+        //}
     }
 
     void Request(MessageType type, int frame, System.ArraySegment<byte> buffSeg)
@@ -126,7 +129,7 @@ public  class UdpNetManager : MonoBehaviour
 
     public void Instantiate(string path, Vector3 pos, Quaternion rotation)
     {
-        FrameController.Instance.RegisterCommand();
+        FrameController.Instance.RegisterCurrentCommand();
         RequestCreateObj(FrameController.Instance.GetExecuteFrame, path, pos, rotation);
     }
     public void RequestCreateObj(int frame, string path, Vector3 pos, Quaternion rotation)
@@ -142,10 +145,10 @@ public  class UdpNetManager : MonoBehaviour
         Request(MessageType.CreateObj, frame, dataBuffer.GetArraySegment());
     }
 
-    public void RequestEnterRoom()
+    public void ReadyForGame()
     {
-        //FrameController.Instance.RegisterCommand();
-        Request(MessageType.AddPlayer, 0, new System.ArraySegment<byte>(System.Text.Encoding.UTF8.GetBytes(UserInfo.Instance.Room.id)));
+        FrameController.Instance.RegisterCommand(-1);
+        Request(MessageType.ReadyForGame, FrameController.ExecuteFrame, new System.ArraySegment<byte>(System.Text.Encoding.UTF8.GetBytes(UserInfo.Instance.Room.id)));
     }
 
     public void RequestMissingMsg(int frame, string player)

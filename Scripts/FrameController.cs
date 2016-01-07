@@ -18,8 +18,13 @@ public class FrameController : AutoCreateSingleTon<FrameController> {
 
 	EmptyCommandEmiter ece = new EmptyCommandEmiter();
 
-    public void RegisterCommand() {
+    public void RegisterCurrentCommand() {
         ece.AddCommand(Frame);
+    }
+
+    public void RegisterCommand(int frame)
+    {
+        ece.AddCommand(frame);
     }
     public float DeltaTime
     {

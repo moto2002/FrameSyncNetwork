@@ -11,6 +11,7 @@ public enum MessageType : int
  Empty = 3,
  AddPlayer = 4,
  GetMissingCmd = 5,
+ ReadyForGame = 6,
 };
 
 

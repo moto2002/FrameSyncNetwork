@@ -13,6 +13,7 @@ public enum MessageType : int
  EnterRoomReply = 5,
  QuitRoomReply = 6,
  GetRoomListReply = 7,
+ PlayerEnterRoom = 8,
 };
 
 

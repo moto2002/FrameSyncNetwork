@@ -112,6 +112,7 @@ class DataPaser
         RegisterType<string>((bytes) => System.Text.Encoding.UTF8.GetString(bytes.Array, bytes.Offset, bytes.Count));
         RegisterType<WorldMessages.CreateRoomReply>(bytes => WorldMessages.CreateRoomReply.GetRootAsCreateRoomReply(new FlatBuffers.ByteBuffer(bytes.Array, bytes.Offset)));
         RegisterType<WorldMessages.GetRoomListReply>(bytes => WorldMessages.GetRoomListReply.GetRootAsGetRoomListReply(new FlatBuffers.ByteBuffer(bytes.Array, bytes.Offset)));
+        RegisterType<int>(bytes => BitConverter.ToInt32(bytes.Array, bytes.Offset));
     }
 
     static object[] DesStruct<T>(ArraySegment<byte> seg) where T : struct

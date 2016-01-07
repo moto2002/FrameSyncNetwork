@@ -10,8 +10,23 @@ public class WorldUITest : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-
-    }
+		WorldNetwork.Instance.RegistPushMsgCallback<PlayerEnterRoom> (
+		(msg) =>
+		{
+			var room = UserInfo.Instance.Room;
+			if(room != null && room.id == msg.RoomId){
+				var player = msg.PlayerId;
+				if(!room.players.Contains(player))
+				{
+					room.players.Add(player);
+					if(room.DynamicPlayerCount == room.capacity){
+						Application.LoadLevel(WorldNetwork.Instance.RoomSceneName);
+					}
+				}
+			}
+		}
+		);
+	}
 
     // Update is called once per frame
     void OnGUI()
@@ -46,9 +61,20 @@ public class WorldUITest : MonoBehaviour
         GUILayout.BeginScrollView(new Vector2());
         for (int i = 0, imax = rooms.Count; i < imax; i++)
         {
-            if (GUILayout.Button(string.Format("Id: {0}, PlayerCount: {1}", rooms[i].id, rooms[i].playerCount))) {
-				UserInfo.Instance.Room = rooms[i];
-                Application.LoadLevel(WorldNetwork.Instance.RoomSceneName);
+            var room = rooms[i];
+            if (GUILayout.Button(string.Format("Id: {0}, PlayerCount: {1}/{2}", room.id, room.playerCount, room.capacity)))
+            {
+                WorldNetwork.Instance.Send<EnterRoomReply>(MessageType.EnterRoom, new ArraySegment<byte>(System.Text.Encoding.UTF8.GetBytes(rooms[i].id)), (msg) =>{
+					var result = msg.Result;
+                    if (result == EnterRoomResult.Ok)
+                    {
+                        UserInfo.Instance.Room = room;
+						for(int j = 0, jmax = msg.PlayersLength; j < jmax; j ++){
+							var player = msg.GetPlayers(j);
+							room.players.Add(player);
+						}
+                    }
+                });
             }
         }
         GUILayout.EndScrollView();
