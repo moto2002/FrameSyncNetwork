@@ -69,11 +69,6 @@ public class TestObj : FrameBehaviour
         state = State.moving;
     }
 
-    [UdpRpc]
-    public void TurnColor(Color c)
-    {
-        GetComponentInChildren<Renderer>().material.color = c;
-    }
 
     [UdpRpc]
     public void LogString(string str)

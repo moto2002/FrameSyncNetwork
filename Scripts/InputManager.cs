@@ -34,12 +34,6 @@ public class InputManager : MonoBehaviour {
             return;
         }
 
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            int index = Random.Range(0, colors.Length);
-            TestObj.Instance.GetUdpNetwork().RPC("TurnColor", RPCMode.All, colors[index]);
-            return;
-        }
 
         if (Input.GetKeyDown(KeyCode.S)) {
             TestObj.Instance.GetUdpNetwork().RPC("LogString", RPCMode.All, "Hello World");

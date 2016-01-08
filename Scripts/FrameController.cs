@@ -51,6 +51,21 @@ public class FrameController : AutoCreateSingleTon<FrameController> {
         return ret;
     }
 
+    public int IndexOfPlayer(string id)
+    {
+        for (int i = 0; i < players.Count; i++) {
+            if (players[i].pId == id) {
+                return i;
+            }
+        }
+        throw new KeyNotFoundException("Cannot Find Player With Id: {0}" + id);
+    }
+
+    public void SortPlayers()
+    {
+        players.Sort((a, b) => a.pId.CompareTo(b.pId));
+    }
+
     public int AlreadyPlayerCount {
         get {
             return players.Count;

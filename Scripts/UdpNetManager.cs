@@ -60,6 +60,7 @@ public  class UdpNetManager : MonoBehaviour
 		foreach (var item in UserInfo.Instance.Room.players) {
 			FrameController.Instance.AddPlayer(item, FrameController.ExecuteFrame);
 		}
+        FrameController.Instance.SortPlayers();
         //FrameController.Instance.Freezed = true;
         MessageDispatcher.Instance.RegisterMsgType(MessageType.Rpc, OnRpcMsgCallback);
         MessageDispatcher.Instance.RegisterMsgType(MessageType.CreateObj, OnCreateObjCallback);
