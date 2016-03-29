@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using FlatBuffers;
-using WorldMessages;
 using System;
+using world_messages;
 public class WorldUITest : MonoBehaviour
 {
     List<Room> rooms = new List<Room>();
@@ -10,7 +9,7 @@ public class WorldUITest : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-		WorldNetwork.Instance.RegistPushMsgCallback<PlayerEnterRoom> (
+		WorldNetwork.Instance.RegistPushMsgCallback<MsgPlayerEnterRoom> (
 		(msg) =>
 		{
 			var room = UserInfo.Instance.Room;
@@ -36,12 +35,12 @@ public class WorldUITest : MonoBehaviour
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("GetRoomList"))
             {
-                WorldNetwork.Instance.Send<GetRoomListReply>(MessageType.GetRoomList, new ArraySegment<byte>(new byte[0]), (msg) =>
+                WorldNetwork.Instance.Send<MsgGetRoomListReply>(MessageType.GetRoomList, new ArraySegment<byte>(new byte[0]), (msg) =>
                 {
                     rooms.Clear();
-                    for (int i = 0, imax = msg.RoomLength; i < imax; i++)
+                    for (int i = 0, imax = msg.RoomsCount; i < imax; i++)
                     {
-                        var item = msg.GetRoom(i);
+                        var item = msg.GetRooms(i);
                         rooms.Add(new Room() { id = item.Id, playerCount = item.PlayerCount, capacity = item.Capacity });
                     }
                 });
@@ -52,7 +51,7 @@ public class WorldUITest : MonoBehaviour
                 int capacity = 0;
                 if (int.TryParse(numStr, out capacity))
                 {
-                    WorldNetwork.Instance.Send<CreateRoomReply>(MessageType.CreateRoom, new ArraySegment<byte>(System.BitConverter.GetBytes(capacity)), (msg) =>
+                    WorldNetwork.Instance.Send<MsgCreateRoomReply>(MessageType.CreateRoom, new ArraySegment<byte>(System.BitConverter.GetBytes(capacity)), (msg) =>
                     {
                         rooms.Add(new Room() { id = msg.Id, playerCount = 0, capacity = msg.Capacity });
                     });
@@ -66,13 +65,13 @@ public class WorldUITest : MonoBehaviour
                 var room = rooms[i];
                 if (GUILayout.Button(string.Format("Id: {0}, PlayerCount: {1}/{2}", room.id, room.playerCount, room.capacity)))
                 {
-                    WorldNetwork.Instance.Send<EnterRoomReply>(MessageType.EnterRoom, new ArraySegment<byte>(System.Text.Encoding.UTF8.GetBytes(rooms[i].id)), (msg) =>
+                    WorldNetwork.Instance.Send<MsgEnterRoomReply>(MessageType.EnterRoom, new ArraySegment<byte>(System.Text.Encoding.UTF8.GetBytes(rooms[i].id)), (msg) =>
                     {
                         var result = msg.Result;
                         if (result == EnterRoomResult.Ok)
                         {
                             UserInfo.Instance.Room = room;
-                            for (int j = 0, jmax = msg.PlayersLength; j < jmax; j++)
+                            for (int j = 0, jmax = msg.PlayersCount; j < jmax; j++)
                             {
                                 var player = msg.GetPlayers(j);
                                 room.players.Add(player);

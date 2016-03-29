@@ -2,8 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
-using WorldMessages;
-using FlatBuffers;
+using world_messages;
+using Google.ProtocolBuffers;
 using Utility;
 public class WorldNetwork : AutoCreateSingleTon<WorldNetwork> {
     public string RoomSceneName;
@@ -12,10 +12,10 @@ public class WorldNetwork : AutoCreateSingleTon<WorldNetwork> {
     sealed class WaitReplyItem
     {
         public int msgId;
-        public Action<ArraySegment<byte>> action;
+        public Action<ByteString> action;
     }
     Queue<WaitReplyItem> callBackQue = new Queue<WaitReplyItem>();
-    Dictionary<string, Action<ArraySegment<byte>>> pushCallbackDict = new Dictionary<string, Action<ArraySegment<byte>>>();
+    Dictionary<string, Action<ByteString>> pushCallbackDict = new Dictionary<string, Action<ByteString>>();
     GenUdpClient client;
     private int msgId;
     int MsgId
@@ -43,14 +43,14 @@ public class WorldNetwork : AutoCreateSingleTon<WorldNetwork> {
 
     void OnRecvMessage(byte[] bytes)
     {
-        ReplyMsg msg = ReplyMsg.GetRootAsReplyMsg(new FlatBuffers.ByteBuffer(bytes, 0));
+        ReplyMsg msg = ReplyMsg.ParseFrom(bytes);
         var recvMsgId = msg.MsgId;
         if (recvMsgId == -1)
         {
-            Action<ArraySegment<byte>> action;
-            if (pushCallbackDict.TryGetValue(msg.Type.ToString(), out action))
+            Action<ByteString> action;
+            if (pushCallbackDict.TryGetValue("Msg" + msg.Type.ToString(), out action))
             {
-                var seg = msg.GetBuffBytes().Value;
+                var seg = msg.Buff;
                 action(seg);
             }
             else {
@@ -69,7 +69,7 @@ public class WorldNetwork : AutoCreateSingleTon<WorldNetwork> {
                 if (peek.msgId == msg.MsgId)
                 {
                     callBackQue.Dequeue();
-                    peek.action(msg.GetBuffBytes().Value);
+                    peek.action(msg.Buff);
                 }
                 else {
                     Debug.LogWarning(string.Format("MsgId mismatch, peek: {0}, received : {1}", peek.msgId, msg.MsgId));
@@ -78,23 +78,31 @@ public class WorldNetwork : AutoCreateSingleTon<WorldNetwork> {
         }
     }
 
-    public void Send(ByteBuffer bb)
+    public void Send(byte[] bb)
     {
-        client.Send(bb.Data, bb.Position, bb.Length - bb.Position);  
+        client.Send(bb);  
     }
     public void Send<ReplyType>(MessageType type, ArraySegment<byte> buffSegment, Action<ReplyType> callBack)
     {
         int mId = MsgId;
+        /*
         FlatBufferBuilder fb = new FlatBufferBuilder(1);
         var vec = WorldMessage.CreateWorldMessage(fb, type, fb.CreateString(UserInfo.Instance.Id), fb.CreateBuffVector(WorldMessage.StartBuffVector, buffSegment), mId);
         fb.Finish(vec.Value);
-        Action<ArraySegment<byte>> action = (recvBytes) =>
+         * */
+        var msg = WorldMessage.CreateBuilder()
+            .SetType(type)
+            .SetPlayerId(UserInfo.Instance.Id)
+            .SetBuff(ByteString.CopyFrom(buffSegment.Array, buffSegment.Offset, buffSegment.Count))
+            .SetMsgId(mId)
+            .Build();
+        Action<ByteString> action = (recvBytes) =>
         {
             ReplyType reply = DataPaser.Instance.Deserialize<ReplyType>(recvBytes);
             callBack(reply);
         };
         callBackQue.Enqueue(new WaitReplyItem() { msgId = mId, action = action});
-        Send(fb.DataBuffer);
+        Send(msg.ToByteArray());
     }
 	// Update is called once per frame
 	void Update () {

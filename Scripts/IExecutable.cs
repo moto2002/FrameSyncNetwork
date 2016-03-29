@@ -51,22 +51,22 @@ public class EmptyObj : IExecutable
         
     }
 }
-public class RpcExeObj : ExecutableCmd<Messages.RpcMsg>
+public class RpcExeObj : ExecutableCmd<messages.MsgRpc>
 {
-    Messages.RpcMsg msg;
+    messages.MsgRpc msg;
     public override void Execute()
     {
         UdpNetManager.Instance.InvokeRpc(msg);
     }
 
-    public RpcExeObj(int frame, Messages.RpcMsg msg) 
+    public RpcExeObj(int frame, messages.MsgRpc msg) 
         : base(frame, msg)
     {
         this.msg = msg;
     }
 }
 
-public class CreateObjCmd : ExecutableCmd<Messages.CreateObj>
+public class CreateObjCmd : ExecutableCmd<messages.MsgCreateObj>
 {
     Vector3 pos;
     Quaternion rot;
@@ -77,7 +77,7 @@ public class CreateObjCmd : ExecutableCmd<Messages.CreateObj>
     {
         this.player = player;
     }
-    public CreateObjCmd(int frame, string player, Messages.CreateObj msg)
+    public CreateObjCmd(int frame, string player, messages.MsgCreateObj msg)
         : base(frame, msg)
     {
         var _pos = msg.Pos;

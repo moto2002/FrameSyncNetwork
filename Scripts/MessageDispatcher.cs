@@ -1,14 +1,14 @@
 ﻿using UnityEngine;
 using System.Net;
 using System.Net.Sockets;
-using Messages;
-using FlatBuffers;
+using messages;
+using Google.ProtocolBuffers;
 using System.Collections.Generic;
 public class MessageDispatcher : MonoBehaviour
 {
     public string Ip = "127.0.0.1";
     public int Port = 2015;
-    Dictionary<MessageType, System.Action<int, string, ByteBuffer>> actionDict = new Dictionary<MessageType, System.Action<int, string, ByteBuffer>>();
+    Dictionary<messages.MessageType, System.Action<int, string, ByteString>> actionDict = new Dictionary<MessageType, System.Action<int, string, ByteString>>();
     GenUdpClient client;
     public static MessageDispatcher Instance
     {
@@ -51,6 +51,14 @@ public class MessageDispatcher : MonoBehaviour
 		client.Send (byteSeg.Array, byteSeg.Offset, byteSeg.Count);
     }
 
+    public void Send(byte[] bytes)
+    {
+#if TEST
+        bytesSend += bytes.Length;
+#endif
+        client.Send(bytes);
+    }
+
     void OnMessageReceived(byte[] bytes)
     {
 #if TEST
@@ -65,10 +73,8 @@ public class MessageDispatcher : MonoBehaviour
         }
         bytesReceived += bytes.Length;
 #endif
-        GenMessage msg = GenMessage.GetRootAsGenMessage(new ByteBuffer(bytes, 0));
-        var buffSeg = msg.GetBufBytes().Value;
-        ByteBuffer bb = new ByteBuffer(buffSeg.Array, buffSeg.Offset);
-        actionDict[msg.MsgType](msg.Frame, msg.PId, bb);
+        GenMessage msg = GenMessage.ParseFrom(bytes);
+        actionDict[msg.MsgType](msg.Frame, msg.PId, msg.Buf);
     }
 #if TEST
     void OnGUI()
@@ -87,7 +93,7 @@ public class MessageDispatcher : MonoBehaviour
         }
     }
 #endif
-    public void RegisterMsgType(MessageType type, System.Action<int, string, ByteBuffer> action)
+    public void RegisterMsgType(MessageType type, System.Action<int, string, ByteString> action)
     {
         actionDict[type] = action;
     }

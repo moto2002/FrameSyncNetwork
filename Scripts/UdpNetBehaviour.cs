@@ -87,9 +87,9 @@ public class UdpNetBehaviour : MonoBehaviour {
         FrameController.Instance.RegisterCurrentCommand();
     }
 
-    public void InvokeRpc(Messages.RpcMsg msg)
+    public void InvokeRpc(messages.MsgRpc msg)
     {
-        var buf = msg.GetArgbufBytes().Value;
-        rpcTbl[msg.Method].Execute(buf);
+        var buf = msg.Argbuf.ToByteArray();
+        rpcTbl[msg.Method].Execute(new ArraySegment<byte>(buf, 0, buf.Length));
     }
 }

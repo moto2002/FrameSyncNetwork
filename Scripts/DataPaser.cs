@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Runtime.InteropServices;
-using Messages;
 using Utility;
+using Google.ProtocolBuffers;
 class DataPaser
 {
     class TypeNotRegisteredException : System.Exception
@@ -38,7 +38,7 @@ class DataPaser
         }
     }
     Dictionary<string, IBufferRW> paramDict = new Dictionary<string, IBufferRW>();
-    Dictionary<string, System.Func<ArraySegment<byte>, object>> deserializeDict = new Dictionary<string, System.Func<ArraySegment<byte>, object>>();
+    Dictionary<string, System.Func<ByteString, object>> deserializeDict = new Dictionary<string, System.Func<ByteString, object>>();
 
     static DataPaser m_instance;
 
@@ -51,16 +51,16 @@ class DataPaser
         }
     }
 
-    public void RegisterType<Type>(System.Func<ArraySegment<byte>, object> des)
+    public void RegisterType<Type>(System.Func<ByteString, object> des)
     {
         var typeName = typeof(Type).FullName;
         deserializeDict[typeName] = des;
     }
 
-    public T Deserialize<T>(ArraySegment<byte> bytes)
+    public T Deserialize<T>(ByteString bytes)
     {
         var typeName = typeof(T).FullName;
-        System.Func<ArraySegment<byte>, object> fun;
+        System.Func<ByteString, object> fun;
         if (deserializeDict.TryGetValue(typeName, out fun)) {
             return (T)fun(bytes);
         }
@@ -100,9 +100,9 @@ class DataPaser
     {
         paramDict[typeof(T).Name] = new ParseMethod() { serMethod = ser, desMethod = deser};
     }
-	void RegisterTableType<T>(System.Func<FlatBuffers.ByteBuffer, T> decodeFun)
+	void RegisterTableType<T>(System.Func<ByteString, T> decodeFun)
 	{
-		RegisterType<T>(bytes => decodeFun(new FlatBuffers.ByteBuffer(bytes.Array, bytes.Offset)));
+		RegisterType<T>(bytes => decodeFun(bytes));
 	}
     private DataPaser()
     {
@@ -113,12 +113,12 @@ class DataPaser
         BindStructParam<Quaternion>();
         BindStructParam<Color>();
         RegisterParam<string>((args) => new ArraySegment<byte>(System.Text.Encoding.UTF8.GetBytes(args[0] as string)), (seg) => new object[1]{System.Text.Encoding.UTF8.GetString(seg.Array, seg.Offset, seg.Count)});
-        RegisterType<string>((bytes) => System.Text.Encoding.UTF8.GetString(bytes.Array, bytes.Offset, bytes.Count));
-		RegisterTableType<WorldMessages.CreateRoomReply>(WorldMessages.CreateRoomReply.GetRootAsCreateRoomReply);
-		RegisterTableType<WorldMessages.GetRoomListReply>(WorldMessages.GetRoomListReply.GetRootAsGetRoomListReply);
-        RegisterType<int>(bytes => BitConverter.ToInt32(bytes.Array, bytes.Offset));
-		RegisterTableType<WorldMessages.EnterRoomReply>(WorldMessages.EnterRoomReply.GetRootAsEnterRoomReply);
-		RegisterTableType<WorldMessages.PlayerEnterRoom>(WorldMessages.PlayerEnterRoom.GetRootAsPlayerEnterRoom);
+        RegisterType<string>((bytes) => bytes.ToStringUtf8());
+        RegisterType<int>(bytes => BitConverter.ToInt32(bytes.ToByteArray(), 0));
+        RegisterTableType<world_messages.MsgCreateRoomReply>(world_messages.MsgCreateRoomReply.ParseFrom);
+        RegisterTableType<world_messages.MsgGetRoomListReply>(world_messages.MsgGetRoomListReply.ParseFrom);
+        RegisterTableType<world_messages.MsgEnterRoomReply>(world_messages.MsgEnterRoomReply.ParseFrom);
+        RegisterTableType<world_messages.MsgPlayerEnterRoom>(world_messages.MsgPlayerEnterRoom.ParseFrom);
     }
 
     static object[] DesStruct<T>(ArraySegment<byte> seg) where T : struct
@@ -196,6 +196,11 @@ class DataPaser
 		int offset = _offset;
         for (int i = 0; i < parameters.Length; i++)
         {
+            if (offset >= bytes.Length)
+            {
+                Debug.LogWarning("byteslen: " + bytes.Length + " initOffset: " + _offset + " i : " + i);
+                throw new ArgumentOutOfRangeException();
+            }
             var type = parameters[i].ParameterType;
             if (type.IsValueType)
             {
@@ -221,8 +226,6 @@ class DataPaser
                 ret[i] = array;
                 offset += sizeof(int) + elemSize * length;
             }
-			if(offset >= bytes.Length)
-				throw new ArgumentOutOfRangeException();
         }
         return ret;
     }
