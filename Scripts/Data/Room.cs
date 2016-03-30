@@ -4,10 +4,10 @@ using System.Collections.Generic;
 
 public sealed class Room
 {
-    public string id;
+    public int id;
     public int playerCount;
     public int capacity;
-	public List<string> players = new List<string>();
+	public List<int> players = new List<int>();
 	public int DynamicPlayerCount{
 		get{
 			return players.Count;

@@ -72,12 +72,12 @@ public class CreateObjCmd : ExecutableCmd<messages.MsgCreateObj>
     Quaternion rot;
     string path;
     GameObject prefab;
-    string player;
-    private CreateObjCmd(int frame, string player) : base(frame)
+    int playerIndex;
+    private CreateObjCmd(int frame, int playerIndex) : base(frame)
     {
-        this.player = player;
+        this.playerIndex = playerIndex;
     }
-    public CreateObjCmd(int frame, string player, messages.MsgCreateObj msg)
+    public CreateObjCmd(int frame, int playerIndex, messages.MsgCreateObj msg)
         : base(frame, msg)
     {
         var _pos = msg.Pos;
@@ -85,12 +85,12 @@ public class CreateObjCmd : ExecutableCmd<messages.MsgCreateObj>
         pos = new Vector3(_pos.X, _pos.Y, _pos.Z);
         rot = new Quaternion(_rot.X, _rot.Y, _rot.Z, _rot.W);
         path = msg.Path;
-        this.player = player;
+        this.playerIndex = playerIndex;
     }
 
-    public static CreateObjCmd CreatePlayer(int frame, string player, GameObject playerPrefab)
+    public static CreateObjCmd CreatePlayer(int frame, int playerIndex, GameObject playerPrefab)
     {
-        return new CreateObjCmd(frame, player) { pos = Vector3.zero, rot = Quaternion.identity, prefab = playerPrefab };
+        return new CreateObjCmd(frame, playerIndex) { pos = Vector3.zero, rot = Quaternion.identity, prefab = playerPrefab };
     }
     public override void Execute()
     {
@@ -99,7 +99,7 @@ public class CreateObjCmd : ExecutableCmd<messages.MsgCreateObj>
             go = GameObject.Instantiate(prefab, pos, rot) as GameObject;
         else
             go = GameObject.Instantiate(Resources.Load(path), pos, rot) as GameObject;
-        go.GetUdpNetwork().ownerId = player;
+        go.GetUdpNetwork().ownerIndex = playerIndex;
         var behaviours = go.GetComponentsInChildren<FrameBehaviour>(false);
         for (int i = 0; i < behaviours.Length; i++) {
             behaviours[i].Init();

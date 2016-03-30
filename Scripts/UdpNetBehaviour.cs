@@ -34,7 +34,7 @@ public class UdpNetBehaviour : MonoBehaviour {
         }
     }
     [HideInInspector]
-    public string ownerId;
+    public int ownerIndex;
     Dictionary<string, RpcMethod> rpcTbl = new Dictionary<string, RpcMethod>();
     public int NetId
     {

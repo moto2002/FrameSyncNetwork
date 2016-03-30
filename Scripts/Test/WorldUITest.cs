@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 using System;
 using world_messages;
@@ -9,12 +10,12 @@ public class WorldUITest : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-		WorldNetwork.Instance.RegistPushMsgCallback<MsgPlayerEnterRoom> (
+        WorldNetwork.Instance.RegisterCallBack<MsgPlayerEnterRoom>(MsgPlayerEnterRoom.ParseFrom, 
 		(msg) =>
 		{
 			var room = UserInfo.Instance.Room;
 			if(room != null && room.id == msg.RoomId){
-				var player = msg.PlayerId;
+				var player = msg.PlayerIndex;
 				if(!room.players.Contains(player))
 				{
 					room.players.Add(player);
@@ -25,11 +26,14 @@ public class WorldUITest : MonoBehaviour
 			}
 		}
 		);
+        WorldNetwork.Instance.Connect();
 	}
 
     // Update is called once per frame
     void OnGUI()
     {
+        if (!WorldNetwork.Instance.Connectd)
+            return;
         if (UserInfo.Instance.Room == null)
         {
             GUILayout.BeginHorizontal();
@@ -65,11 +69,12 @@ public class WorldUITest : MonoBehaviour
                 var room = rooms[i];
                 if (GUILayout.Button(string.Format("Id: {0}, PlayerCount: {1}/{2}", room.id, room.playerCount, room.capacity)))
                 {
-                    WorldNetwork.Instance.Send<MsgEnterRoomReply>(MessageType.EnterRoom, new ArraySegment<byte>(System.Text.Encoding.UTF8.GetBytes(rooms[i].id)), (msg) =>
+                    WorldNetwork.Instance.Send<MsgEnterRoomReply>(MessageType.EnterRoom, new ArraySegment<byte>(BitConverter.GetBytes(room.id)), (msg) =>
                     {
                         var result = msg.Result;
                         if (result == EnterRoomResult.Ok)
                         {
+                            UserInfo.Instance.Index = msg.AllockedIndex;
                             UserInfo.Instance.Room = room;
                             for (int j = 0, jmax = msg.PlayersCount; j < jmax; j++)
                             {
@@ -89,7 +94,7 @@ public class WorldUITest : MonoBehaviour
         else { 
             foreach(var item in UserInfo.Instance.Room.players)
             {
-                GUILayout.Button(item);
+                GUILayout.Button(item.ToString());
             }
         }
     }

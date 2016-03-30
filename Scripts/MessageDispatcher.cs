@@ -8,7 +8,7 @@ public class MessageDispatcher : MonoBehaviour
 {
     public string Ip = "127.0.0.1";
     public int Port = 2015;
-    Dictionary<messages.MessageType, System.Action<int, string, ByteString>> actionDict = new Dictionary<MessageType, System.Action<int, string, ByteString>>();
+    Dictionary<messages.MessageType, System.Action<int, int, ByteString>> actionDict = new Dictionary<MessageType, System.Action<int, int, ByteString>>();
     GenUdpClient client;
     public static MessageDispatcher Instance
     {
@@ -74,7 +74,7 @@ public class MessageDispatcher : MonoBehaviour
         bytesReceived += bytes.Length;
 #endif
         GenMessage msg = GenMessage.ParseFrom(bytes);
-        actionDict[msg.MsgType](msg.Frame, msg.PId, msg.Buf);
+        actionDict[msg.MsgType](msg.Frame, msg.PIdx, msg.Buf);
     }
 #if TEST
     void OnGUI()
@@ -93,7 +93,7 @@ public class MessageDispatcher : MonoBehaviour
         }
     }
 #endif
-    public void RegisterMsgType(MessageType type, System.Action<int, string, ByteString> action)
+    public void RegisterMsgType(MessageType type, System.Action<int, int, ByteString> action)
     {
         actionDict[type] = action;
     }

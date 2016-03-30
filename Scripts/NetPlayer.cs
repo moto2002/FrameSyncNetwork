@@ -15,7 +15,7 @@ public class NetPlayer {
         get;
         set;
     }
-    public string pId;
+    public int pIdx;
     public int lockFrame
     {
         get;
@@ -48,13 +48,13 @@ public class NetPlayer {
     {
         if (lockFrame == -1)
             return;
-        if (pId == UserInfo.Instance.Id)
+        if (pIdx == UserInfo.Instance.Index)
         {
             UdpNetManager.Instance.ResendMessage(lockFrame);
         }
         else
         {
-            UdpNetManager.Instance.RequestMissingMsg(lockFrame, pId);
+            UdpNetManager.Instance.RequestMissingMsg(lockFrame, pIdx);
         }
         lockFrame = -1;
         lockTime = 0;

@@ -1,95 +1,164 @@
 ﻿using UnityEngine;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Net.Sockets;
 using world_messages;
 using Google.ProtocolBuffers;
 using Utility;
 public class WorldNetwork : AutoCreateSingleTon<WorldNetwork> {
+
     public string RoomSceneName;
-    public string Ip = "127.0.0.1";
-    public int port = 2015;
-    sealed class WaitReplyItem
-    {
-        public int msgId;
-        public Action<ByteString> action;
-    }
-    Queue<WaitReplyItem> callBackQue = new Queue<WaitReplyItem>();
-    Dictionary<string, Action<ByteString>> pushCallbackDict = new Dictionary<string, Action<ByteString>>();
-    GenUdpClient client;
-    private int msgId;
-    int MsgId
-    {
+    public string host = "127.0.0.1";
+    public int port = 1234;
+    private Dictionary<string, System.Action<ByteString>> actionDict = new Dictionary<string, System.Action<ByteString>>();
+    private Queue<System.Action<ByteString>> callbackQue = new Queue<System.Action<ByteString>>();
+    private long loginTime;
+    private float loginTimeSinceGameStartup;
+    private int msgId = 0;
+    public int NextMsgId{
         get {
-            return msgId++; ;
+            return msgId++;
         }
     }
-	// Use this for initialization
-	void Start () {
-        client = new GenUdpClient(Ip, port);
-        client.OnReceiveMessage = OnRecvMessage;
-        msgId = 1;
-        client.Start(this);
-	}
-
-    public void RegistPushMsgCallback<T>(System.Action<T> callBack)
+    public long CurrentTimeMS
     {
-        pushCallbackDict[typeof(T).Name] = (bytes) =>
+        get
         {
-            T msg = DataPaser.Instance.Deserialize<T>(bytes);
+            return loginTime + Mathf.FloorToInt((Time.realtimeSinceStartup - loginTimeSinceGameStartup) * 1000);
+        }
+    }
+
+    public void SetLoginTime(long loginTime, float timeSecSinceLogin)
+    {
+        this.loginTime = loginTime;
+        this.loginTimeSinceGameStartup = timeSecSinceLogin;
+    }
+
+    private GameSocket socket;
+
+    public float TimeSinceLogin
+    {
+        get
+        {
+            return 0;
+        }
+    }
+    protected override void Awake()
+    {
+        if (mInstance != null && mInstance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            mInstance = this;
+        }
+    }
+
+    public void RegisterCallBack<T>(System.Func<ByteString, T> parseFunc, System.Action<T> callBack)
+    {
+        actionDict[typeof(T).Name] = (bytes) =>
+        {
+            T msg = parseFunc(bytes);
             callBack(msg);
         };
     }
 
-    void OnRecvMessage(byte[] bytes)
+    protected override void OnDestroy()
     {
-        ReplyMsg msg = ReplyMsg.ParseFrom(bytes);
-        var recvMsgId = msg.MsgId;
-        if (recvMsgId == -1)
+        base.OnDestroy();
+        if (socket != null)
+            socket.Dispose();
+    }
+
+
+    public bool Connectd
+    {
+        get
         {
-            Action<ByteString> action;
-            if (pushCallbackDict.TryGetValue("Msg" + msg.Type.ToString(), out action))
-            {
-                var seg = msg.Buff;
-                action(seg);
-            }
-            else {
-                Debug.LogWarning(string.Format("MsgType {0} not registered", msg.Type));
-            }
+            if (socket == null)
+                return false;
+            return socket.Connected;
+        }
+    }
+    public bool ConnectionError
+    {
+        get
+        {
+            if (socket == null)
+                return false;
+            return socket.Error;
+        }
+    }
+    // Use this for initialization
+
+    void OnReceiveMsg(byte[] bytes)
+    {
+        var msg = ReplyMsg.ParseFrom(bytes);
+        //Debug.Log("receive message, type: " + msg.Type);
+        if (msg.MsgId != -1)
+        {
+            var action = callbackQue.Dequeue();
+            action(msg.Buff);
         }
         else
         {
-            if (callBackQue.Count == 0)
-            {
-                Debug.LogError("MsgId Error: " + msg.MsgId);
-            }
-            else
-            {
-                var peek = callBackQue.Peek();
-                if (peek.msgId == msg.MsgId)
-                {
-                    callBackQue.Dequeue();
-                    peek.action(msg.Buff);
-                }
-                else {
-                    Debug.LogWarning(string.Format("MsgId mismatch, peek: {0}, received : {1}", peek.msgId, msg.MsgId));
-                }
-            }
+            var action = actionDict["Msg" + msg.Type.ToString()];
+            action(msg.Buff);
         }
     }
+    public void Connect(System.Action callback = null)
+    {
+        if (socket != null)
+            socket.Dispose();
+        StartCoroutine(StartConnect(callback));
+    }
 
+    IEnumerator StartConnect(System.Action callback = null)
+    {
+        socket = new GameSocket(host, port);
+        socket.onReceiveMessage = this.OnReceiveMsg;
+        socket.onDisconnect = this.OnDisconnected;
+        socket.onConnected = this.OnConnected;
+        socket.Connect();
+        while (!socket.Connected)
+        {
+            yield return null;
+        }
+        if (callback != null)
+            callback();
+        StartCoroutine(socket.Dispatcher());
+    }
+
+    void OnConnected()
+    {
+        Debug.Log("connected", this);
+    }
+
+    void OnDisconnected()
+    {
+        Debug.Log("connection break");
+    }
+
+    void Send(byte[] array, int offset, int count)
+    {
+        var stream = socket.GetStream();
+        if (stream.CanWrite)
+        {
+            stream.BeginWrite(array, offset, count, (s) =>
+            {
+                stream.EndWrite(s);
+            }, null);
+        }
+    }
     public void Send(byte[] bb)
     {
-        client.Send(bb);  
+        this.socket.Send(new System.ArraySegment<byte>(bb));
     }
     public void Send<ReplyType>(MessageType type, ArraySegment<byte> buffSegment, Action<ReplyType> callBack)
     {
-        int mId = MsgId;
-        /*
-        FlatBufferBuilder fb = new FlatBufferBuilder(1);
-        var vec = WorldMessage.CreateWorldMessage(fb, type, fb.CreateString(UserInfo.Instance.Id), fb.CreateBuffVector(WorldMessage.StartBuffVector, buffSegment), mId);
-        fb.Finish(vec.Value);
-         * */
+        int mId = NextMsgId;
         var msg = WorldMessage.CreateBuilder()
             .SetType(type)
             .SetPlayerId(UserInfo.Instance.Id)
@@ -101,17 +170,7 @@ public class WorldNetwork : AutoCreateSingleTon<WorldNetwork> {
             ReplyType reply = DataPaser.Instance.Deserialize<ReplyType>(recvBytes);
             callBack(reply);
         };
-        callBackQue.Enqueue(new WaitReplyItem() { msgId = mId, action = action});
+        callbackQue.Enqueue(action);
         Send(msg.ToByteArray());
-    }
-	// Update is called once per frame
-	void Update () {
-	
-	}
-
-    protected override void OnDestroy()
-    {
-        base.OnDestroy();
-        client.Dispose();
     }
 }

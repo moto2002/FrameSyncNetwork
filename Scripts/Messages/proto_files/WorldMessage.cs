@@ -43,35 +43,35 @@ namespace world_messages {
       
       static WorldMessage() {
         byte[] descriptorData = global::System.Convert.FromBase64String(
-            "ChJXb3JsZE1lc3NhZ2UucHJvdG8SDndvcmxkX21lc3NhZ2VzIjYKEk1zZ1Bs" + 
-            "YXllckVudGVyUm9vbRIOCgZyb29tSWQYASACKAkSEAoIcGxheWVySWQYAiAC" + 
-            "KAkiVQoRTXNnRW50ZXJSb29tUmVwbHkSDwoHcGxheWVycxgBIAMoCRIvCgZy" + 
-            "ZXN1bHQYAiACKA4yHy53b3JsZF9tZXNzYWdlcy5FbnRlclJvb21SZXN1bHQi" + 
-            "aAoMV29ybGRNZXNzYWdlEikKBHR5cGUYASACKA4yGy53b3JsZF9tZXNzYWdl" + 
-            "cy5NZXNzYWdlVHlwZRIQCghwbGF5ZXJJZBgCIAIoCRIMCgRidWZmGAMgASgM" + 
-            "Eg0KBW1zZ0lkGAQgAigFIjkKBFJvb20SCgoCaWQYASACKAkSEwoLcGxheWVy" + 
-            "Q291bnQYAiACKAUSEAoIY2FwYWNpdHkYAyACKAUiUgoIUmVwbHlNc2cSKQoE" + 
-            "dHlwZRgBIAIoDjIbLndvcmxkX21lc3NhZ2VzLk1lc3NhZ2VUeXBlEg0KBW1z" + 
-            "Z0lkGAIgAigFEgwKBGJ1ZmYYAyACKAwiOgoTTXNnR2V0Um9vbUxpc3RSZXBs" + 
-            "eRIjCgVyb29tcxgBIAMoCzIULndvcmxkX21lc3NhZ2VzLlJvb20iRQoSTXNn" + 
-            "Q3JlYXRlUm9vbVJlcGx5EhEKCWVycm9yQ29kZRgBIAIoBRIKCgJpZBgCIAIo" + 
-            "CRIQCghjYXBhY2l0eRgDIAIoBSqyAQoLTWVzc2FnZVR5cGUSDgoKQ3JlYXRl" + 
-            "Um9vbRABEg0KCUVudGVyUm9vbRACEgwKCFF1aXRSb29tEAMSDwoLR2V0Um9v" + 
-            "bUxpc3QQBBITCg9DcmVhdGVSb29tUmVwbHkQBRISCg5FbnRlclJvb21SZXBs" + 
-            "eRAGEhEKDVF1aXRSb29tUmVwbHkQBxIUChBHZXRSb29tTGlzdFJlcGx5EAgS" + 
-            "EwoPUGxheWVyRW50ZXJSb29tEAkqTgoPRW50ZXJSb29tUmVzdWx0EgYKAk9r" + 
-            "EAESDQoJQWxyZWFkeUluEAISEQoNT3V0T2ZDYXBhY2l0eRADEhEKDVJvb21O" + 
-            "b3RFeGlzdHMQBA==");
+            "ChJXb3JsZE1lc3NhZ2UucHJvdG8SDndvcmxkX21lc3NhZ2VzIjkKEk1zZ1Bs" + 
+            "YXllckVudGVyUm9vbRIOCgZyb29tSWQYASACKAUSEwoLcGxheWVySW5kZXgY" + 
+            "AiACKAUibAoRTXNnRW50ZXJSb29tUmVwbHkSDwoHcGxheWVycxgBIAMoBRIV" + 
+            "Cg1hbGxvY2tlZEluZGV4GAIgAigFEi8KBnJlc3VsdBgDIAIoDjIfLndvcmxk" + 
+            "X21lc3NhZ2VzLkVudGVyUm9vbVJlc3VsdCJoCgxXb3JsZE1lc3NhZ2USKQoE" + 
+            "dHlwZRgBIAIoDjIbLndvcmxkX21lc3NhZ2VzLk1lc3NhZ2VUeXBlEhAKCHBs" + 
+            "YXllcklkGAIgAigJEgwKBGJ1ZmYYAyABKAwSDQoFbXNnSWQYBCACKAUiOQoE" + 
+            "Um9vbRIKCgJpZBgBIAIoBRITCgtwbGF5ZXJDb3VudBgCIAIoBRIQCghjYXBh" + 
+            "Y2l0eRgDIAIoBSJSCghSZXBseU1zZxIpCgR0eXBlGAEgAigOMhsud29ybGRf" + 
+            "bWVzc2FnZXMuTWVzc2FnZVR5cGUSDQoFbXNnSWQYAiACKAUSDAoEYnVmZhgD" + 
+            "IAIoDCI6ChNNc2dHZXRSb29tTGlzdFJlcGx5EiMKBXJvb21zGAEgAygLMhQu" + 
+            "d29ybGRfbWVzc2FnZXMuUm9vbSJIChJNc2dDcmVhdGVSb29tUmVwbHkSFAoJ" + 
+            "ZXJyb3JDb2RlGAEgASgFOgEwEgoKAmlkGAIgAigFEhAKCGNhcGFjaXR5GAMg" + 
+            "AigFKrIBCgtNZXNzYWdlVHlwZRIOCgpDcmVhdGVSb29tEAESDQoJRW50ZXJS" + 
+            "b29tEAISDAoIUXVpdFJvb20QAxIPCgtHZXRSb29tTGlzdBAEEhMKD0NyZWF0" + 
+            "ZVJvb21SZXBseRAFEhIKDkVudGVyUm9vbVJlcGx5EAYSEQoNUXVpdFJvb21S" + 
+            "ZXBseRAHEhQKEEdldFJvb21MaXN0UmVwbHkQCBITCg9QbGF5ZXJFbnRlclJv" + 
+            "b20QCSpOCg9FbnRlclJvb21SZXN1bHQSBgoCT2sQARINCglBbHJlYWR5SW4Q" + 
+            "AhIRCg1PdXRPZkNhcGFjaXR5EAMSEQoNUm9vbU5vdEV4aXN0cxAE");
         pbd::FileDescriptor.InternalDescriptorAssigner assigner = delegate(pbd::FileDescriptor root) {
           descriptor = root;
           internal__static_world_messages_MsgPlayerEnterRoom__Descriptor = Descriptor.MessageTypes[0];
           internal__static_world_messages_MsgPlayerEnterRoom__FieldAccessorTable = 
               new pb::FieldAccess.FieldAccessorTable<global::world_messages.MsgPlayerEnterRoom, global::world_messages.MsgPlayerEnterRoom.Builder>(internal__static_world_messages_MsgPlayerEnterRoom__Descriptor,
-                  new string[] { "RoomId", "PlayerId", });
+                  new string[] { "RoomId", "PlayerIndex", });
           internal__static_world_messages_MsgEnterRoomReply__Descriptor = Descriptor.MessageTypes[1];
           internal__static_world_messages_MsgEnterRoomReply__FieldAccessorTable = 
               new pb::FieldAccess.FieldAccessorTable<global::world_messages.MsgEnterRoomReply, global::world_messages.MsgEnterRoomReply.Builder>(internal__static_world_messages_MsgEnterRoomReply__Descriptor,
-                  new string[] { "Players", "Result", });
+                  new string[] { "Players", "AllockedIndex", "Result", });
           internal__static_world_messages_WorldMessage__Descriptor = Descriptor.MessageTypes[2];
           internal__static_world_messages_WorldMessage__FieldAccessorTable = 
               new pb::FieldAccess.FieldAccessorTable<global::world_messages.WorldMessage, global::world_messages.WorldMessage.Builder>(internal__static_world_messages_WorldMessage__Descriptor,
@@ -135,8 +135,8 @@ namespace world_messages {
   public sealed partial class MsgPlayerEnterRoom : pb::GeneratedMessage<MsgPlayerEnterRoom, MsgPlayerEnterRoom.Builder> {
     private MsgPlayerEnterRoom() { }
     private static readonly MsgPlayerEnterRoom defaultInstance = new MsgPlayerEnterRoom().MakeReadOnly();
-    private static readonly string[] _msgPlayerEnterRoomFieldNames = new string[] { "playerId", "roomId" };
-    private static readonly uint[] _msgPlayerEnterRoomFieldTags = new uint[] { 18, 10 };
+    private static readonly string[] _msgPlayerEnterRoomFieldNames = new string[] { "playerIndex", "roomId" };
+    private static readonly uint[] _msgPlayerEnterRoomFieldTags = new uint[] { 16, 8 };
     public static MsgPlayerEnterRoom DefaultInstance {
       get { return defaultInstance; }
     }
@@ -159,28 +159,28 @@ namespace world_messages {
     
     public const int RoomIdFieldNumber = 1;
     private bool hasRoomId;
-    private string roomId_ = "";
+    private int roomId_;
     public bool HasRoomId {
       get { return hasRoomId; }
     }
-    public string RoomId {
+    public int RoomId {
       get { return roomId_; }
     }
     
-    public const int PlayerIdFieldNumber = 2;
-    private bool hasPlayerId;
-    private string playerId_ = "";
-    public bool HasPlayerId {
-      get { return hasPlayerId; }
+    public const int PlayerIndexFieldNumber = 2;
+    private bool hasPlayerIndex;
+    private int playerIndex_;
+    public bool HasPlayerIndex {
+      get { return hasPlayerIndex; }
     }
-    public string PlayerId {
-      get { return playerId_; }
+    public int PlayerIndex {
+      get { return playerIndex_; }
     }
     
     public override bool IsInitialized {
       get {
         if (!hasRoomId) return false;
-        if (!hasPlayerId) return false;
+        if (!hasPlayerIndex) return false;
         return true;
       }
     }
@@ -189,10 +189,10 @@ namespace world_messages {
       int size = SerializedSize;
       string[] field_names = _msgPlayerEnterRoomFieldNames;
       if (hasRoomId) {
-        output.WriteString(1, field_names[1], RoomId);
+        output.WriteInt32(1, field_names[1], RoomId);
       }
-      if (hasPlayerId) {
-        output.WriteString(2, field_names[0], PlayerId);
+      if (hasPlayerIndex) {
+        output.WriteInt32(2, field_names[0], PlayerIndex);
       }
       UnknownFields.WriteTo(output);
     }
@@ -205,10 +205,10 @@ namespace world_messages {
         
         size = 0;
         if (hasRoomId) {
-          size += pb::CodedOutputStream.ComputeStringSize(1, RoomId);
+          size += pb::CodedOutputStream.ComputeInt32Size(1, RoomId);
         }
-        if (hasPlayerId) {
-          size += pb::CodedOutputStream.ComputeStringSize(2, PlayerId);
+        if (hasPlayerIndex) {
+          size += pb::CodedOutputStream.ComputeInt32Size(2, PlayerIndex);
         }
         size += UnknownFields.SerializedSize;
         memoizedSerializedSize = size;
@@ -339,8 +339,8 @@ namespace world_messages {
         if (other.HasRoomId) {
           RoomId = other.RoomId;
         }
-        if (other.HasPlayerId) {
-          PlayerId = other.PlayerId;
+        if (other.HasPlayerIndex) {
+          PlayerIndex = other.PlayerIndex;
         }
         this.MergeUnknownFields(other.UnknownFields);
         return this;
@@ -385,12 +385,12 @@ namespace world_messages {
               ParseUnknownField(input, unknownFields, extensionRegistry, tag, field_name);
               break;
             }
-            case 10: {
-              result.hasRoomId = input.ReadString(ref result.roomId_);
+            case 8: {
+              result.hasRoomId = input.ReadInt32(ref result.roomId_);
               break;
             }
-            case 18: {
-              result.hasPlayerId = input.ReadString(ref result.playerId_);
+            case 16: {
+              result.hasPlayerIndex = input.ReadInt32(ref result.playerIndex_);
               break;
             }
           }
@@ -406,12 +406,11 @@ namespace world_messages {
       public bool HasRoomId {
         get { return result.hasRoomId; }
       }
-      public string RoomId {
+      public int RoomId {
         get { return result.RoomId; }
         set { SetRoomId(value); }
       }
-      public Builder SetRoomId(string value) {
-        pb::ThrowHelper.ThrowIfNull(value, "value");
+      public Builder SetRoomId(int value) {
         PrepareBuilder();
         result.hasRoomId = true;
         result.roomId_ = value;
@@ -420,28 +419,27 @@ namespace world_messages {
       public Builder ClearRoomId() {
         PrepareBuilder();
         result.hasRoomId = false;
-        result.roomId_ = "";
+        result.roomId_ = 0;
         return this;
       }
       
-      public bool HasPlayerId {
-        get { return result.hasPlayerId; }
+      public bool HasPlayerIndex {
+        get { return result.hasPlayerIndex; }
       }
-      public string PlayerId {
-        get { return result.PlayerId; }
-        set { SetPlayerId(value); }
+      public int PlayerIndex {
+        get { return result.PlayerIndex; }
+        set { SetPlayerIndex(value); }
       }
-      public Builder SetPlayerId(string value) {
-        pb::ThrowHelper.ThrowIfNull(value, "value");
+      public Builder SetPlayerIndex(int value) {
         PrepareBuilder();
-        result.hasPlayerId = true;
-        result.playerId_ = value;
+        result.hasPlayerIndex = true;
+        result.playerIndex_ = value;
         return this;
       }
-      public Builder ClearPlayerId() {
+      public Builder ClearPlayerIndex() {
         PrepareBuilder();
-        result.hasPlayerId = false;
-        result.playerId_ = "";
+        result.hasPlayerIndex = false;
+        result.playerIndex_ = 0;
         return this;
       }
     }
@@ -456,8 +454,8 @@ namespace world_messages {
   public sealed partial class MsgEnterRoomReply : pb::GeneratedMessage<MsgEnterRoomReply, MsgEnterRoomReply.Builder> {
     private MsgEnterRoomReply() { }
     private static readonly MsgEnterRoomReply defaultInstance = new MsgEnterRoomReply().MakeReadOnly();
-    private static readonly string[] _msgEnterRoomReplyFieldNames = new string[] { "players", "result" };
-    private static readonly uint[] _msgEnterRoomReplyFieldTags = new uint[] { 10, 16 };
+    private static readonly string[] _msgEnterRoomReplyFieldNames = new string[] { "allockedIndex", "players", "result" };
+    private static readonly uint[] _msgEnterRoomReplyFieldTags = new uint[] { 16, 8, 24 };
     public static MsgEnterRoomReply DefaultInstance {
       get { return defaultInstance; }
     }
@@ -479,18 +477,28 @@ namespace world_messages {
     }
     
     public const int PlayersFieldNumber = 1;
-    private pbc::PopsicleList<string> players_ = new pbc::PopsicleList<string>();
-    public scg::IList<string> PlayersList {
+    private pbc::PopsicleList<int> players_ = new pbc::PopsicleList<int>();
+    public scg::IList<int> PlayersList {
       get { return pbc::Lists.AsReadOnly(players_); }
     }
     public int PlayersCount {
       get { return players_.Count; }
     }
-    public string GetPlayers(int index) {
+    public int GetPlayers(int index) {
       return players_[index];
     }
     
-    public const int ResultFieldNumber = 2;
+    public const int AllockedIndexFieldNumber = 2;
+    private bool hasAllockedIndex;
+    private int allockedIndex_;
+    public bool HasAllockedIndex {
+      get { return hasAllockedIndex; }
+    }
+    public int AllockedIndex {
+      get { return allockedIndex_; }
+    }
+    
+    public const int ResultFieldNumber = 3;
     private bool hasResult;
     private global::world_messages.EnterRoomResult result_ = global::world_messages.EnterRoomResult.Ok;
     public bool HasResult {
@@ -502,6 +510,7 @@ namespace world_messages {
     
     public override bool IsInitialized {
       get {
+        if (!hasAllockedIndex) return false;
         if (!hasResult) return false;
         return true;
       }
@@ -511,10 +520,13 @@ namespace world_messages {
       int size = SerializedSize;
       string[] field_names = _msgEnterRoomReplyFieldNames;
       if (players_.Count > 0) {
-        output.WriteStringArray(1, field_names[0], players_);
+        output.WriteInt32Array(1, field_names[1], players_);
+      }
+      if (hasAllockedIndex) {
+        output.WriteInt32(2, field_names[0], AllockedIndex);
       }
       if (hasResult) {
-        output.WriteEnum(2, field_names[1], (int) Result, Result);
+        output.WriteEnum(3, field_names[2], (int) Result, Result);
       }
       UnknownFields.WriteTo(output);
     }
@@ -528,14 +540,17 @@ namespace world_messages {
         size = 0;
         {
           int dataSize = 0;
-          foreach (string element in PlayersList) {
-            dataSize += pb::CodedOutputStream.ComputeStringSizeNoTag(element);
+          foreach (int element in PlayersList) {
+            dataSize += pb::CodedOutputStream.ComputeInt32SizeNoTag(element);
           }
           size += dataSize;
           size += 1 * players_.Count;
         }
+        if (hasAllockedIndex) {
+          size += pb::CodedOutputStream.ComputeInt32Size(2, AllockedIndex);
+        }
         if (hasResult) {
-          size += pb::CodedOutputStream.ComputeEnumSize(2, (int) Result);
+          size += pb::CodedOutputStream.ComputeEnumSize(3, (int) Result);
         }
         size += UnknownFields.SerializedSize;
         memoizedSerializedSize = size;
@@ -667,6 +682,9 @@ namespace world_messages {
         if (other.players_.Count != 0) {
           result.players_.Add(other.players_);
         }
+        if (other.HasAllockedIndex) {
+          AllockedIndex = other.AllockedIndex;
+        }
         if (other.HasResult) {
           Result = other.Result;
         }
@@ -713,11 +731,16 @@ namespace world_messages {
               ParseUnknownField(input, unknownFields, extensionRegistry, tag, field_name);
               break;
             }
-            case 10: {
-              input.ReadStringArray(tag, field_name, result.players_);
+            case 10:
+            case 8: {
+              input.ReadInt32Array(tag, field_name, result.players_);
               break;
             }
             case 16: {
+              result.hasAllockedIndex = input.ReadInt32(ref result.allockedIndex_);
+              break;
+            }
+            case 24: {
               object unknown;
               if(input.ReadEnum(ref result.result_, out unknown)) {
                 result.hasResult = true;
@@ -725,7 +748,7 @@ namespace world_messages {
                 if (unknownFields == null) {
                   unknownFields = pb::UnknownFieldSet.CreateBuilder(this.UnknownFields);
                 }
-                unknownFields.MergeVarintField(2, (ulong)(int)unknown);
+                unknownFields.MergeVarintField(3, (ulong)(int)unknown);
               }
               break;
             }
@@ -739,28 +762,26 @@ namespace world_messages {
       }
       
       
-      public pbc::IPopsicleList<string> PlayersList {
+      public pbc::IPopsicleList<int> PlayersList {
         get { return PrepareBuilder().players_; }
       }
       public int PlayersCount {
         get { return result.PlayersCount; }
       }
-      public string GetPlayers(int index) {
+      public int GetPlayers(int index) {
         return result.GetPlayers(index);
       }
-      public Builder SetPlayers(int index, string value) {
-        pb::ThrowHelper.ThrowIfNull(value, "value");
+      public Builder SetPlayers(int index, int value) {
         PrepareBuilder();
         result.players_[index] = value;
         return this;
       }
-      public Builder AddPlayers(string value) {
-        pb::ThrowHelper.ThrowIfNull(value, "value");
+      public Builder AddPlayers(int value) {
         PrepareBuilder();
         result.players_.Add(value);
         return this;
       }
-      public Builder AddRangePlayers(scg::IEnumerable<string> values) {
+      public Builder AddRangePlayers(scg::IEnumerable<int> values) {
         PrepareBuilder();
         result.players_.Add(values);
         return this;
@@ -768,6 +789,26 @@ namespace world_messages {
       public Builder ClearPlayers() {
         PrepareBuilder();
         result.players_.Clear();
+        return this;
+      }
+      
+      public bool HasAllockedIndex {
+        get { return result.hasAllockedIndex; }
+      }
+      public int AllockedIndex {
+        get { return result.AllockedIndex; }
+        set { SetAllockedIndex(value); }
+      }
+      public Builder SetAllockedIndex(int value) {
+        PrepareBuilder();
+        result.hasAllockedIndex = true;
+        result.allockedIndex_ = value;
+        return this;
+      }
+      public Builder ClearAllockedIndex() {
+        PrepareBuilder();
+        result.hasAllockedIndex = false;
+        result.allockedIndex_ = 0;
         return this;
       }
       
@@ -1219,7 +1260,7 @@ namespace world_messages {
     private Room() { }
     private static readonly Room defaultInstance = new Room().MakeReadOnly();
     private static readonly string[] _roomFieldNames = new string[] { "capacity", "id", "playerCount" };
-    private static readonly uint[] _roomFieldTags = new uint[] { 24, 10, 16 };
+    private static readonly uint[] _roomFieldTags = new uint[] { 24, 8, 16 };
     public static Room DefaultInstance {
       get { return defaultInstance; }
     }
@@ -1242,11 +1283,11 @@ namespace world_messages {
     
     public const int IdFieldNumber = 1;
     private bool hasId;
-    private string id_ = "";
+    private int id_;
     public bool HasId {
       get { return hasId; }
     }
-    public string Id {
+    public int Id {
       get { return id_; }
     }
     
@@ -1283,7 +1324,7 @@ namespace world_messages {
       int size = SerializedSize;
       string[] field_names = _roomFieldNames;
       if (hasId) {
-        output.WriteString(1, field_names[1], Id);
+        output.WriteInt32(1, field_names[1], Id);
       }
       if (hasPlayerCount) {
         output.WriteInt32(2, field_names[2], PlayerCount);
@@ -1302,7 +1343,7 @@ namespace world_messages {
         
         size = 0;
         if (hasId) {
-          size += pb::CodedOutputStream.ComputeStringSize(1, Id);
+          size += pb::CodedOutputStream.ComputeInt32Size(1, Id);
         }
         if (hasPlayerCount) {
           size += pb::CodedOutputStream.ComputeInt32Size(2, PlayerCount);
@@ -1488,8 +1529,8 @@ namespace world_messages {
               ParseUnknownField(input, unknownFields, extensionRegistry, tag, field_name);
               break;
             }
-            case 10: {
-              result.hasId = input.ReadString(ref result.id_);
+            case 8: {
+              result.hasId = input.ReadInt32(ref result.id_);
               break;
             }
             case 16: {
@@ -1513,12 +1554,11 @@ namespace world_messages {
       public bool HasId {
         get { return result.hasId; }
       }
-      public string Id {
+      public int Id {
         get { return result.Id; }
         set { SetId(value); }
       }
-      public Builder SetId(string value) {
-        pb::ThrowHelper.ThrowIfNull(value, "value");
+      public Builder SetId(int value) {
         PrepareBuilder();
         result.hasId = true;
         result.id_ = value;
@@ -1527,7 +1567,7 @@ namespace world_messages {
       public Builder ClearId() {
         PrepareBuilder();
         result.hasId = false;
-        result.id_ = "";
+        result.id_ = 0;
         return this;
       }
       
@@ -2259,7 +2299,7 @@ namespace world_messages {
     private MsgCreateRoomReply() { }
     private static readonly MsgCreateRoomReply defaultInstance = new MsgCreateRoomReply().MakeReadOnly();
     private static readonly string[] _msgCreateRoomReplyFieldNames = new string[] { "capacity", "errorCode", "id" };
-    private static readonly uint[] _msgCreateRoomReplyFieldTags = new uint[] { 24, 8, 18 };
+    private static readonly uint[] _msgCreateRoomReplyFieldTags = new uint[] { 24, 8, 16 };
     public static MsgCreateRoomReply DefaultInstance {
       get { return defaultInstance; }
     }
@@ -2292,11 +2332,11 @@ namespace world_messages {
     
     public const int IdFieldNumber = 2;
     private bool hasId;
-    private string id_ = "";
+    private int id_;
     public bool HasId {
       get { return hasId; }
     }
-    public string Id {
+    public int Id {
       get { return id_; }
     }
     
@@ -2312,7 +2352,6 @@ namespace world_messages {
     
     public override bool IsInitialized {
       get {
-        if (!hasErrorCode) return false;
         if (!hasId) return false;
         if (!hasCapacity) return false;
         return true;
@@ -2326,7 +2365,7 @@ namespace world_messages {
         output.WriteInt32(1, field_names[1], ErrorCode);
       }
       if (hasId) {
-        output.WriteString(2, field_names[2], Id);
+        output.WriteInt32(2, field_names[2], Id);
       }
       if (hasCapacity) {
         output.WriteInt32(3, field_names[0], Capacity);
@@ -2345,7 +2384,7 @@ namespace world_messages {
           size += pb::CodedOutputStream.ComputeInt32Size(1, ErrorCode);
         }
         if (hasId) {
-          size += pb::CodedOutputStream.ComputeStringSize(2, Id);
+          size += pb::CodedOutputStream.ComputeInt32Size(2, Id);
         }
         if (hasCapacity) {
           size += pb::CodedOutputStream.ComputeInt32Size(3, Capacity);
@@ -2532,8 +2571,8 @@ namespace world_messages {
               result.hasErrorCode = input.ReadInt32(ref result.errorCode_);
               break;
             }
-            case 18: {
-              result.hasId = input.ReadString(ref result.id_);
+            case 16: {
+              result.hasId = input.ReadInt32(ref result.id_);
               break;
             }
             case 24: {
@@ -2573,12 +2612,11 @@ namespace world_messages {
       public bool HasId {
         get { return result.hasId; }
       }
-      public string Id {
+      public int Id {
         get { return result.Id; }
         set { SetId(value); }
       }
-      public Builder SetId(string value) {
-        pb::ThrowHelper.ThrowIfNull(value, "value");
+      public Builder SetId(int value) {
         PrepareBuilder();
         result.hasId = true;
         result.id_ = value;
@@ -2587,7 +2625,7 @@ namespace world_messages {
       public Builder ClearId() {
         PrepareBuilder();
         result.hasId = false;
-        result.id_ = "";
+        result.id_ = 0;
         return this;
       }
       

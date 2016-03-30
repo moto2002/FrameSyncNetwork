@@ -31,7 +31,7 @@ public class TestObj : FrameBehaviour
     protected override void OnInit()
     {
         base.OnInit();
-        if (this.GetUdpNetwork().ownerId == UserInfo.Instance.Id)
+        if (this.GetUdpNetwork().ownerIndex == UserInfo.Instance.Index)
         {
 			_instance = this;
         }
@@ -39,7 +39,8 @@ public class TestObj : FrameBehaviour
 
 	void OnGUI()
 	{
-		if (this.GetUdpNetwork ().ownerId == UserInfo.Instance.Id) {
+        if (this.GetUdpNetwork().ownerIndex == UserInfo.Instance.Index)
+        {
 			//GUILayout.Label (UserInfo.Instance.Id);
 		}
 	}

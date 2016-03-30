@@ -3,7 +3,7 @@ using System.Collections;
 
 public class AutoCreateSingleTon<T> : MonoBehaviour where T : AutoCreateSingleTon<T>
 {
-    private static T mInstance;
+    protected static T mInstance;
     public static T Instance {
         get {
             if (mInstance == null)

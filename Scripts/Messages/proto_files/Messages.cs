@@ -48,13 +48,13 @@ namespace messages {
           "UnBjEg0KBW5ldElkGAEgAigFEg4KBm1ldGhvZBgCIAIoCRIOCgZhcmdidWYY" + 
           "AyACKAwiVgoMTXNnQ3JlYXRlT2JqEgwKBHBhdGgYASACKAkSGwoDcG9zGAIg" + 
           "AigLMg4ubWVzc2FnZXMuVmVjMxIbCgNyb3QYAyACKAsyDi5tZXNzYWdlcy5R" + 
-          "dWF0IjEKEE1zZ0dldE1pc3NpbmdDbWQSDgoGcGxheWVyGAEgAigJEg0KBWZy" + 
-          "YW1lGAIgAigFImwKCkdlbk1lc3NhZ2USJgoHbXNnVHlwZRgBIAIoDjIVLm1l" + 
-          "c3NhZ2VzLk1lc3NhZ2VUeXBlEgsKA3BJZBgCIAIoCRINCgVtc2dJZBgDIAIo" + 
-          "BRILCgNidWYYBCABKAwSDQoFZnJhbWUYBSACKAUqbgoLTWVzc2FnZVR5cGUS" + 
-          "DQoJQ3JlYXRlT2JqEAASBwoDUnBjEAESCAoEQXV0aBACEgkKBUVtcHR5EAMS" + 
-          "DQoJQWRkUGxheWVyEAQSEQoNR2V0TWlzc2luZ0NtZBAFEhAKDFJlYWR5Rm9y" + 
-          "R2FtZRAG");
+          "dWF0IjYKEE1zZ0dldE1pc3NpbmdDbWQSEwoLcGxheWVySW5kZXgYASACKAUS" + 
+          "DQoFZnJhbWUYAiACKAUibQoKR2VuTWVzc2FnZRImCgdtc2dUeXBlGAEgAigO" + 
+          "MhUubWVzc2FnZXMuTWVzc2FnZVR5cGUSDAoEcElkeBgCIAIoBRINCgVtc2dJ" + 
+          "ZBgDIAIoBRILCgNidWYYBCABKAwSDQoFZnJhbWUYBSACKAUqbgoLTWVzc2Fn" + 
+          "ZVR5cGUSDQoJQ3JlYXRlT2JqEAASBwoDUnBjEAESCAoEQXV0aBACEgkKBUVt" + 
+          "cHR5EAMSDQoJQWRkUGxheWVyEAQSEQoNR2V0TWlzc2luZ0NtZBAFEhAKDFJl" + 
+          "YWR5Rm9yR2FtZRAG");
       pbd::FileDescriptor.InternalDescriptorAssigner assigner = delegate(pbd::FileDescriptor root) {
         descriptor = root;
         internal__static_messages_Vec3__Descriptor = Descriptor.MessageTypes[0];
@@ -80,11 +80,11 @@ namespace messages {
         internal__static_messages_MsgGetMissingCmd__Descriptor = Descriptor.MessageTypes[5];
         internal__static_messages_MsgGetMissingCmd__FieldAccessorTable = 
             new pb::FieldAccess.FieldAccessorTable<global::messages.MsgGetMissingCmd, global::messages.MsgGetMissingCmd.Builder>(internal__static_messages_MsgGetMissingCmd__Descriptor,
-                new string[] { "Player", "Frame", });
+                new string[] { "PlayerIndex", "Frame", });
         internal__static_messages_GenMessage__Descriptor = Descriptor.MessageTypes[6];
         internal__static_messages_GenMessage__FieldAccessorTable = 
             new pb::FieldAccess.FieldAccessorTable<global::messages.GenMessage, global::messages.GenMessage.Builder>(internal__static_messages_GenMessage__Descriptor,
-                new string[] { "MsgType", "PId", "MsgId", "Buf", "Frame", });
+                new string[] { "MsgType", "PIdx", "MsgId", "Buf", "Frame", });
         return null;
       };
       pbd::FileDescriptor.InternalBuildGeneratedFileFrom(descriptorData,
@@ -2074,8 +2074,8 @@ namespace messages {
   public sealed partial class MsgGetMissingCmd : pb::GeneratedMessage<MsgGetMissingCmd, MsgGetMissingCmd.Builder> {
     private MsgGetMissingCmd() { }
     private static readonly MsgGetMissingCmd defaultInstance = new MsgGetMissingCmd().MakeReadOnly();
-    private static readonly string[] _msgGetMissingCmdFieldNames = new string[] { "frame", "player" };
-    private static readonly uint[] _msgGetMissingCmdFieldTags = new uint[] { 16, 10 };
+    private static readonly string[] _msgGetMissingCmdFieldNames = new string[] { "frame", "playerIndex" };
+    private static readonly uint[] _msgGetMissingCmdFieldTags = new uint[] { 16, 8 };
     public static MsgGetMissingCmd DefaultInstance {
       get { return defaultInstance; }
     }
@@ -2096,14 +2096,14 @@ namespace messages {
       get { return global::messages.Messages.internal__static_messages_MsgGetMissingCmd__FieldAccessorTable; }
     }
     
-    public const int PlayerFieldNumber = 1;
-    private bool hasPlayer;
-    private string player_ = "";
-    public bool HasPlayer {
-      get { return hasPlayer; }
+    public const int PlayerIndexFieldNumber = 1;
+    private bool hasPlayerIndex;
+    private int playerIndex_;
+    public bool HasPlayerIndex {
+      get { return hasPlayerIndex; }
     }
-    public string Player {
-      get { return player_; }
+    public int PlayerIndex {
+      get { return playerIndex_; }
     }
     
     public const int FrameFieldNumber = 2;
@@ -2118,7 +2118,7 @@ namespace messages {
     
     public override bool IsInitialized {
       get {
-        if (!hasPlayer) return false;
+        if (!hasPlayerIndex) return false;
         if (!hasFrame) return false;
         return true;
       }
@@ -2127,8 +2127,8 @@ namespace messages {
     public override void WriteTo(pb::ICodedOutputStream output) {
       int size = SerializedSize;
       string[] field_names = _msgGetMissingCmdFieldNames;
-      if (hasPlayer) {
-        output.WriteString(1, field_names[1], Player);
+      if (hasPlayerIndex) {
+        output.WriteInt32(1, field_names[1], PlayerIndex);
       }
       if (hasFrame) {
         output.WriteInt32(2, field_names[0], Frame);
@@ -2143,8 +2143,8 @@ namespace messages {
         if (size != -1) return size;
         
         size = 0;
-        if (hasPlayer) {
-          size += pb::CodedOutputStream.ComputeStringSize(1, Player);
+        if (hasPlayerIndex) {
+          size += pb::CodedOutputStream.ComputeInt32Size(1, PlayerIndex);
         }
         if (hasFrame) {
           size += pb::CodedOutputStream.ComputeInt32Size(2, Frame);
@@ -2275,8 +2275,8 @@ namespace messages {
       public override Builder MergeFrom(MsgGetMissingCmd other) {
         if (other == global::messages.MsgGetMissingCmd.DefaultInstance) return this;
         PrepareBuilder();
-        if (other.HasPlayer) {
-          Player = other.Player;
+        if (other.HasPlayerIndex) {
+          PlayerIndex = other.PlayerIndex;
         }
         if (other.HasFrame) {
           Frame = other.Frame;
@@ -2324,8 +2324,8 @@ namespace messages {
               ParseUnknownField(input, unknownFields, extensionRegistry, tag, field_name);
               break;
             }
-            case 10: {
-              result.hasPlayer = input.ReadString(ref result.player_);
+            case 8: {
+              result.hasPlayerIndex = input.ReadInt32(ref result.playerIndex_);
               break;
             }
             case 16: {
@@ -2342,24 +2342,23 @@ namespace messages {
       }
       
       
-      public bool HasPlayer {
-        get { return result.hasPlayer; }
+      public bool HasPlayerIndex {
+        get { return result.hasPlayerIndex; }
       }
-      public string Player {
-        get { return result.Player; }
-        set { SetPlayer(value); }
+      public int PlayerIndex {
+        get { return result.PlayerIndex; }
+        set { SetPlayerIndex(value); }
       }
-      public Builder SetPlayer(string value) {
-        pb::ThrowHelper.ThrowIfNull(value, "value");
+      public Builder SetPlayerIndex(int value) {
         PrepareBuilder();
-        result.hasPlayer = true;
-        result.player_ = value;
+        result.hasPlayerIndex = true;
+        result.playerIndex_ = value;
         return this;
       }
-      public Builder ClearPlayer() {
+      public Builder ClearPlayerIndex() {
         PrepareBuilder();
-        result.hasPlayer = false;
-        result.player_ = "";
+        result.hasPlayerIndex = false;
+        result.playerIndex_ = 0;
         return this;
       }
       
@@ -2394,8 +2393,8 @@ namespace messages {
   public sealed partial class GenMessage : pb::GeneratedMessage<GenMessage, GenMessage.Builder> {
     private GenMessage() { }
     private static readonly GenMessage defaultInstance = new GenMessage().MakeReadOnly();
-    private static readonly string[] _genMessageFieldNames = new string[] { "buf", "frame", "msgId", "msgType", "pId" };
-    private static readonly uint[] _genMessageFieldTags = new uint[] { 34, 40, 24, 8, 18 };
+    private static readonly string[] _genMessageFieldNames = new string[] { "buf", "frame", "msgId", "msgType", "pIdx" };
+    private static readonly uint[] _genMessageFieldTags = new uint[] { 34, 40, 24, 8, 16 };
     public static GenMessage DefaultInstance {
       get { return defaultInstance; }
     }
@@ -2426,14 +2425,14 @@ namespace messages {
       get { return msgType_; }
     }
     
-    public const int PIdFieldNumber = 2;
-    private bool hasPId;
-    private string pId_ = "";
-    public bool HasPId {
-      get { return hasPId; }
+    public const int PIdxFieldNumber = 2;
+    private bool hasPIdx;
+    private int pIdx_;
+    public bool HasPIdx {
+      get { return hasPIdx; }
     }
-    public string PId {
-      get { return pId_; }
+    public int PIdx {
+      get { return pIdx_; }
     }
     
     public const int MsgIdFieldNumber = 3;
@@ -2469,7 +2468,7 @@ namespace messages {
     public override bool IsInitialized {
       get {
         if (!hasMsgType) return false;
-        if (!hasPId) return false;
+        if (!hasPIdx) return false;
         if (!hasMsgId) return false;
         if (!hasFrame) return false;
         return true;
@@ -2482,8 +2481,8 @@ namespace messages {
       if (hasMsgType) {
         output.WriteEnum(1, field_names[3], (int) MsgType, MsgType);
       }
-      if (hasPId) {
-        output.WriteString(2, field_names[4], PId);
+      if (hasPIdx) {
+        output.WriteInt32(2, field_names[4], PIdx);
       }
       if (hasMsgId) {
         output.WriteInt32(3, field_names[2], MsgId);
@@ -2507,8 +2506,8 @@ namespace messages {
         if (hasMsgType) {
           size += pb::CodedOutputStream.ComputeEnumSize(1, (int) MsgType);
         }
-        if (hasPId) {
-          size += pb::CodedOutputStream.ComputeStringSize(2, PId);
+        if (hasPIdx) {
+          size += pb::CodedOutputStream.ComputeInt32Size(2, PIdx);
         }
         if (hasMsgId) {
           size += pb::CodedOutputStream.ComputeInt32Size(3, MsgId);
@@ -2648,8 +2647,8 @@ namespace messages {
         if (other.HasMsgType) {
           MsgType = other.MsgType;
         }
-        if (other.HasPId) {
-          PId = other.PId;
+        if (other.HasPIdx) {
+          PIdx = other.PIdx;
         }
         if (other.HasMsgId) {
           MsgId = other.MsgId;
@@ -2715,8 +2714,8 @@ namespace messages {
               }
               break;
             }
-            case 18: {
-              result.hasPId = input.ReadString(ref result.pId_);
+            case 16: {
+              result.hasPIdx = input.ReadInt32(ref result.pIdx_);
               break;
             }
             case 24: {
@@ -2761,24 +2760,23 @@ namespace messages {
         return this;
       }
       
-      public bool HasPId {
-        get { return result.hasPId; }
+      public bool HasPIdx {
+        get { return result.hasPIdx; }
       }
-      public string PId {
-        get { return result.PId; }
-        set { SetPId(value); }
+      public int PIdx {
+        get { return result.PIdx; }
+        set { SetPIdx(value); }
       }
-      public Builder SetPId(string value) {
-        pb::ThrowHelper.ThrowIfNull(value, "value");
+      public Builder SetPIdx(int value) {
         PrepareBuilder();
-        result.hasPId = true;
-        result.pId_ = value;
+        result.hasPIdx = true;
+        result.pIdx_ = value;
         return this;
       }
-      public Builder ClearPId() {
+      public Builder ClearPIdx() {
         PrepareBuilder();
-        result.hasPId = false;
-        result.pId_ = "";
+        result.hasPIdx = false;
+        result.pIdx_ = 0;
         return this;
       }
       

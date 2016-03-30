@@ -32,6 +32,8 @@ public class UserInfo
         }
     }
 
+    public int Index;
+
     public Room Room
     {
         get;

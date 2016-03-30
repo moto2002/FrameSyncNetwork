@@ -74,25 +74,25 @@ public  class UdpNetManager : MonoBehaviour
     {
         m_instance = null;
     }
-    void OnEmptyCallBack(int frame, string pId, ByteString bb)
+    void OnEmptyCallBack(int frame, int pIdx, ByteString bb)
     {
-        FrameController.Instance.GetPlayer(pId).GetCommand(new EmptyObj(frame));
+        FrameController.Instance.GetPlayer(pIdx).GetCommand(new EmptyObj(frame));
     }
-    void OnRpcMsgCallback(int frame, string pId, ByteString bb)
+    void OnRpcMsgCallback(int frame, int pIdx, ByteString bb)
     {
         var msg = MsgRpc.ParseFrom(bb);
-        FrameController.Instance.GetPlayer(pId).GetCommand(new RpcExeObj(frame, msg));
+        FrameController.Instance.GetPlayer(pIdx).GetCommand(new RpcExeObj(frame, msg));
     }
 
-    void OnCreateObjCallback(int frame, string pId, ByteString bb)
+    void OnCreateObjCallback(int frame, int pIdx, ByteString bb)
     {
         var msg = MsgCreateObj.ParseFrom(bb);
-        FrameController.Instance.GetPlayer(pId).GetCommand(new CreateObjCmd(frame, pId, msg));
+        FrameController.Instance.GetPlayer(pIdx).GetCommand(new CreateObjCmd(frame, pIdx, msg));
     }
 
-    void OnReadyForGameCallBack(int frame, string pId, ByteString bb)
+    void OnReadyForGameCallBack(int frame, int pIdx, ByteString bb)
     {
-        FrameController.Instance.GetPlayer(pId).GetCommand(CreateObjCmd.CreatePlayer(frame, pId, playerPrefab));
+        FrameController.Instance.GetPlayer(pIdx).GetCommand(CreateObjCmd.CreatePlayer(frame, pIdx, playerPrefab));
     }
 
     void Request(MessageType type, int frame, IMessage msg)
@@ -111,7 +111,7 @@ public  class UdpNetManager : MonoBehaviour
         var genMessage = GenMessage.CreateBuilder()
             .SetMsgType(type)
             .SetFrame(frame)
-            .SetPId(UserInfo.Instance.Id)
+            .SetPIdx(UserInfo.Instance.Index)
             .SetMsgId(NextMsgId)
             .SetBuf(buf).Build();
         /*
@@ -175,13 +175,13 @@ public  class UdpNetManager : MonoBehaviour
     public void ReadyForGame()
     {
         FrameController.Instance.RegisterCommand(-1);
-        var msg = ByteString.CopyFrom(UserInfo.Instance.Room.id, System.Text.Encoding.UTF8);
-        Request(MessageType.ReadyForGame, FrameController.ExecuteFrame, msg);
+        var msg = BitConverter.GetBytes(UserInfo.Instance.Room.id);
+        Request(MessageType.ReadyForGame, FrameController.ExecuteFrame, ByteString.CopyFrom(msg));
     }
 
-    public void RequestMissingMsg(int frame, string player)
+    public void RequestMissingMsg(int frame, int playerIndex)
     {
-        Request(MessageType.GetMissingCmd, frame, ByteString.CopyFrom(player, System.Text.Encoding.UTF8));
+        Request(MessageType.GetMissingCmd, frame, ByteString.CopyFrom(BitConverter.GetBytes(playerIndex)));
     }
     public void InvokeRpc(MsgRpc msg)
     {

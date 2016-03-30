@@ -44,26 +44,27 @@ public class FrameController : AutoCreateSingleTon<FrameController> {
     List<FrameBehaviour> backUp = new List<FrameBehaviour>();
     List<NetPlayer> players = new List<NetPlayer>();
 
-    public NetPlayer AddPlayer(string id, int frame)
+    public NetPlayer AddPlayer(int index, int frame)
     {
-        var ret = new NetPlayer() { pId = id , EnterFrame = frame};
+        var ret = new NetPlayer() { pIdx = index , EnterFrame = frame};
         players.Add(ret);
         return ret;
     }
 
-    public int IndexOfPlayer(string id)
+    public int ListIndexOfPlayer(int idx)
     {
         for (int i = 0; i < players.Count; i++) {
-            if (players[i].pId == id) {
+            if (players[i].pIdx == idx)
+            {
                 return i;
             }
         }
-        throw new KeyNotFoundException("Cannot Find Player With Id: {0}" + id);
+        throw new KeyNotFoundException("Cannot Find Player With Index: {0}" + idx);
     }
 
     public void SortPlayers()
     {
-        players.Sort((a, b) => a.pId.CompareTo(b.pId));
+        players.Sort((a, b) => a.pIdx.CompareTo(b.pIdx));
     }
 
     public int AlreadyPlayerCount {
@@ -71,9 +72,9 @@ public class FrameController : AutoCreateSingleTon<FrameController> {
             return players.Count;
         }
     }
-    public NetPlayer GetPlayer(string id)
+    public NetPlayer GetPlayer(int idx)
     {
-        return players.Find(x => x.pId == id);
+        return players.Find(x => x.pIdx == idx);
     }
     public void AddBehaviour(FrameBehaviour item)
     {
