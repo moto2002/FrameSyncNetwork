@@ -4,7 +4,7 @@ using System.Collections;
 public abstract class FrameBehaviour : MonoBehaviour {
     public bool IsDisposed {
         get;
-        private set;
+        protected set;
     }
 	// Use this for initialization
     void Awake()

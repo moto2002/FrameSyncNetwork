@@ -6,8 +6,8 @@ public class TerrainManager : AutoCreateSingleTon<TerrainManager>
     public Color[] colors;
     public void SetPos(int index, Transform trans)
     {
-        trans.parent = playerSlot[index];
-        trans.localPosition = Vector3.zero;
+        trans.SetParent(playerSlot[index].parent);
+        trans.localPosition = playerSlot[index].localPosition;
     }
 
     public void SetColor(int index, Renderer render)

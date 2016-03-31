@@ -192,7 +192,7 @@ public  class UdpNetManager : MonoBehaviour
     { 
         GenMessage msg;
         if(latestCommands.TryGetEnum(x => x.Frame == frame, out msg)){
-			var newMsgId = NextMsgId;
+			//var newMsgId = NextMsgId;
 			MessageDispatcher.Instance.Send(msg.ToByteArray());
         }
     }

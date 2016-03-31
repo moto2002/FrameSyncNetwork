@@ -1,12 +1,47 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Utility;
-public class InputManager : MonoBehaviour {
+public enum MovingState
+{
+    Idle,
+    Up,
+    Down
+}
+public class InputManager : AutoCreateSingleTon<InputManager> {
+    public MovingState movingState
+    {
+        get;
+        private set;
+    }
+    public bool IsShotting
+    {
+        get;
+        private set;
+    }
 	// Use this for initialization
     Color[] colors = new Color[] { Color.red, Color.blue, Color.green, Color.yellow };
 	
 	// Update is called once per frame
 	void Update () {
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) {
+            movingState = MovingState.Up;
+        }
+        else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
+        {
+            movingState = MovingState.Down;
+        }
+        else {
+            movingState = MovingState.Idle;
+        }
+
+        if (Input.GetKey(KeyCode.Space))
+        {
+            IsShotting = true;
+        }
+        else {
+            IsShotting = false;
+        }
+        /*
         if (FrameController.Instance.Frame < FrameController.ExecuteFrame)
             return;
         int exeFrame = FrameController.Instance.GetExecuteFrame;
@@ -48,6 +83,7 @@ public class InputManager : MonoBehaviour {
                 return;
             }
         }
+         * */
 	}
     bool GetHitPos(out Vector3 pos)
     {

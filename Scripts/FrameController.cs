@@ -31,6 +31,12 @@ public class FrameController : AutoCreateSingleTon<FrameController> {
         get;
         private set;
     }
+
+    public float CurrentTime {
+        get {
+            return this.Frame * this.DeltaTime;
+        }
+    }
     public bool Freezed {
 		get;
 		set;
