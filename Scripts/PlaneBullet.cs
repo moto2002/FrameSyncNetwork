@@ -30,7 +30,6 @@ public class PlaneBullet : FrameBehaviour {
     public override void FrameUpdate()
     {
         var localPos = (this.transform.localPosition += dir * 10);
-        RectTransform rectTrans = transform as RectTransform;
         Rect myRect = GetRect;
         var planeRoot = owner.transform.parent;
         for (int i = 0, imax = planeRoot.childCount; i < imax; i++) {

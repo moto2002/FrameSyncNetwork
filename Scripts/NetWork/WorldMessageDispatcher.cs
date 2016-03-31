@@ -6,7 +6,8 @@ using System.Net.Sockets;
 using world_messages;
 using Google.ProtocolBuffers;
 using Utility;
-public class WorldNetwork : AutoCreateSingleTon<WorldNetwork> {
+public class WorldMessageDispatcher : AutoCreateSingleTon<WorldMessageDispatcher>
+{
 
     public string RoomSceneName;
     public string host = "127.0.0.1";
